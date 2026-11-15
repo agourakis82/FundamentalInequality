@@ -65,7 +65,13 @@ owned by the local-fields roadmap, and is not restated here.
 
 ## Examples
 
-`Examples/` holds a worked Artin–Schreier example (`lake build Examples`): uniqueness of the extension, `e = f = 1` and `[L:K] = 2`, so the Ostrowski sum is strict. The polynomial lemmas hold for every prime `p`, but irreducibility and the valued construction are currently limited to `p = 2`.
+`Examples/` holds a worked Artin–Schreier defect example (`lake build
+Examples`) for every prime `p`.  For the extension
+`X^p - X - t⁻¹` over the perfect hull of `F_p((t))`, it proves
+irreducibility, uniqueness of the extended valuation, `e = f = 1`, and
+`[L:K] = p`.  Thus the Ostrowski sum is `1 < p` and the numerical defect
+quotient is `p`.  The original `p = 2` declarations remain available as a
+backwards-compatible quadratic API.
 
 ## Building
 

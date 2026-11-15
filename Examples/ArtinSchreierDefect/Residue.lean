@@ -13,14 +13,13 @@ public import Mathlib.Algebra.CharP.Two
 public import Mathlib.FieldTheory.Perfect
 
 /-!
-# Residue degree one and the unconditional Ostrowski sum
+# Backwards-compatible quadratic residue API
 
-A square root of `t⁻¹` in the perfect hull produces a unit generator of
-residue `1`, and every integral element of the quadratic extension is
-congruent, after a 2-power, to an integer of the first purely inseparable
-layer of the hull. The residue degree of the constructed valuation is
-therefore one, and the Ostrowski sum holds unconditionally:
-`Σ eᵢfᵢ = ef = 1 < 2 = [L:K]`.
+The general residue-degree and strict-sum results are in
+`Examples.ArtinSchreierDefect.ResidueGeneral`.  This file retains the original
+quadratic helper lemmas and public declarations at `p = 2`; its final residue
+degree, strict-sum, and defect-quotient theorems are specialisations of the
+all-primes development.
 -/
 
 @[expose] public section
