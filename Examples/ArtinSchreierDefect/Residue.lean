@@ -388,8 +388,8 @@ theorem exists_root_coords (x : Extension) :
     rw [hrq]
     have hdiff : (g - standardPolynomial 2 * (g /ₘ standardPolynomial 2)) - g =
         - (standardPolynomial 2 * (g /ₘ standardPolynomial 2)) := by ring
-    rw [hdiff, dvd_neg]
-    exact dvd_mul_right _ _
+    rw [hdiff]
+    exact dvd_neg.mpr (dvd_mul_right _ _)
   have hdegf : (standardPolynomial 2).degree = 2 := by
     have hnat' : (standardPolynomial 2).natDegree = 2 :=
       ArtinSchreier.natDegree_polynomial 2 _
