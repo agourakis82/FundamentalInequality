@@ -22,9 +22,9 @@ public import Mathlib.Topology.Algebra.Valued.NormedValued
 # Field data for the Artin–Schreier defect example
 
 The polynomial results (separability, root translates, absence of a root in
-`F_p((t))` or its perfect hull) are proved for every prime `p`. Irreducibility
-and the quadratic extension are currently specialised to `p = 2`, where
-`irreducible_of_degree_le_three_of_not_isRoot` applies.
+`F_p((t))` or its perfect hull), irreducibility, and the resulting degree-`p`
+extension are proved for every prime `p`. The original quadratic API is kept as
+the special case `p = 2`.
 -/
 
 @[expose] public section
@@ -33,6 +33,132 @@ noncomputable section
 
 open Polynomial ValuativeRel
 open scoped LaurentSeries WithZero ValuativeRel
+
+namespace ArtinSchreier
+
+variable (p : ℕ) [Fact p.Prime] {K : Type*} [Field K] [CharP K p]
+
+/-- An Artin–Schreier polynomial of prime degree with no root is irreducible. -/
+theorem irreducible_of_not_isRoot (a : K)
+    (hroot : ∀ x : K, ¬ (polynomial p a).IsRoot x) :
+    Irreducible (polynomial p a) := by
+  let f := polynomial p a
+  have hfmonic : f.Monic := monic p a
+  have hf0 : f ≠ 0 := hfmonic.ne_zero
+  have hfnonunit : ¬ IsUnit f := by
+    apply Polynomial.not_isUnit_of_natDegree_pos
+    simp [f, natDegree_polynomial, (Fact.out : p.Prime).pos]
+  obtain ⟨g, hg, hgf⟩ := WfDvdMonoid.exists_irreducible_factor hfnonunit hf0
+  have hgpos : 0 < g.natDegree :=
+    Polynomial.natDegree_pos_iff_degree_pos.mpr (Polynomial.degree_pos_of_irreducible hg)
+  have hnlt : ¬ g.natDegree < p := by
+    intro hlt
+    let _ : Fact (Irreducible g) := ⟨hg⟩
+    let ι : K →+* AdjoinRoot g := AdjoinRoot.of g
+    let r : AdjoinRoot g := AdjoinRoot.root g
+    let _ : CharP (AdjoinRoot g) p :=
+      charP_of_injective_algebraMap (algebraMap K (AdjoinRoot g)).injective p
+    have hgr : (map ι g).IsRoot r := AdjoinRoot.isRoot_root g
+    have hfr : (map ι f).IsRoot r := by
+      obtain ⟨q, hq⟩ := hgf
+      rw [IsRoot] at hgr ⊢
+      rw [hq]
+      simp only [Polynomial.map_mul, eval_mul, hgr, zero_mul]
+    have hmapf : map ι f = polynomial p (ι a) := by
+      simp [f, polynomial]
+    have hfr' : (polynomial p (ι a)).IsRoot r := by
+      rwa [← hmapf]
+    have hfsplits : (map ι f).Splits := by
+      rw [hmapf]
+      exact splits_of_root p (ι a) r hfr'
+    have hgsplits : (map ι g).Splits :=
+      hfsplits.of_dvd ((Polynomial.map_eq_zero_iff (f := ι) ι.injective).not.mpr hf0)
+        ((map_dvd_map' ι).mpr hgf)
+    let S : Subfield (AdjoinRoot g) := ι.fieldRange
+    have hdiff (x : AdjoinRoot g) (hx : x ∈ (map ι g).roots) : x - r ∈ S := by
+      have hxg : (map ι g).IsRoot x :=
+        (mem_roots ((Polynomial.map_eq_zero_iff (f := ι) ι.injective).not.mpr hg.ne_zero)).mp hx
+      have hxf : (map ι f).IsRoot x := by
+        obtain ⟨q, hq⟩ := (map_dvd_map' ι).mpr hgf
+        rw [IsRoot] at hxg ⊢
+        rw [hq, eval_mul, hxg, zero_mul]
+      rw [hmapf] at hxf
+      obtain ⟨i, hi⟩ := (isRoot_iff p (ι a) r x hfr').mp hxf
+      apply RingHom.mem_range.mpr
+      refine ⟨primeCast p (K := K) i, ?_⟩
+      rw [hi, add_sub_cancel_left]
+      change ι (ZMod.cast i : K) = ZMod.cast i
+      rw [← ZMod.intCast_cast i, map_intCast, ZMod.intCast_cast]
+    have hdiffsum :
+        ((map ι g).roots.map (fun x ↦ x - r)).sum ∈ S :=
+      S.multiset_sum_mem _ (by
+        intro y hy
+        rw [Multiset.mem_map] at hy
+        obtain ⟨x, hx, rfl⟩ := hy
+        exact hdiff x hx)
+    have hnext : (map ι g).nextCoeff ∈ S := by
+      apply RingHom.mem_range.mpr
+      refine ⟨g.nextCoeff, ?_⟩
+      exact (nextCoeff_map ι.injective g).symm
+    have hlead : (map ι g).leadingCoeff ∈ S := by
+      apply RingHom.mem_range.mpr
+      refine ⟨g.leadingCoeff, ?_⟩
+      exact (leadingCoeff_map ι).symm
+    have hlead0 : (map ι g).leadingCoeff ≠ 0 :=
+      leadingCoeff_ne_zero.mpr
+        ((Polynomial.map_eq_zero_iff (f := ι) ι.injective).not.mpr hg.ne_zero)
+    have hsum : (map ι g).roots.sum ∈ S := by
+      have hm := S.mul_mem (S.inv_mem (S.neg_mem hlead)) hnext
+      have heq := hgsplits.nextCoeff_eq_neg_sum_roots_mul_leadingCoeff
+      have heqsum : (map ι g).roots.sum =
+          (-(map ι g).leadingCoeff)⁻¹ * (map ι g).nextCoeff := by
+        rw [heq]
+        field_simp
+      rw [heqsum]
+      exact hm
+    have hsumdiff :
+        ((map ι g).roots.map (fun x ↦ x - r)).sum =
+          (map ι g).roots.sum - (map ι g).roots.card • r := by
+      rw [Multiset.sum_map_sub]
+      simp
+    have hcardr : (map ι g).roots.card • r ∈ S := by
+      have hm := S.sub_mem hsum hdiffsum
+      have heqcard : (map ι g).roots.card • r =
+          (map ι g).roots.sum -
+            ((map ι g).roots.map (fun x ↦ x - r)).sum := by
+        rw [hsumdiff]
+        abel
+      rw [heqcard]
+      exact hm
+    have hcard : (map ι g).roots.card = g.natDegree := by
+      rw [← hgsplits.natDegree_eq_card_roots, natDegree_map]
+    have hnotdvd : ¬ p ∣ g.natDegree :=
+      Nat.not_dvd_of_pos_of_lt hgpos hlt
+    have hdcast : (g.natDegree : AdjoinRoot g) ≠ 0 :=
+      (CharP.cast_eq_zero_iff (AdjoinRoot g) p g.natDegree).not.mpr hnotdvd
+    have hcastmem : (g.natDegree : AdjoinRoot g) ∈ S := by
+      apply RingHom.mem_range.mpr
+      exact ⟨(g.natDegree : K), by simp [ι]⟩
+    have hdr : (g.natDegree : AdjoinRoot g) * r ∈ S := by
+      rw [← nsmul_eq_mul, ← hcard]
+      exact hcardr
+    have hrmem : r ∈ S := by
+      have hm := S.mul_mem (S.inv_mem hcastmem) hdr
+      simpa [hdcast] using hm
+    obtain ⟨y, hy⟩ := RingHom.mem_range.mp hrmem
+    apply hroot y
+    change f.IsRoot y
+    rw [IsRoot] at hfr ⊢
+    rw [← hy, eval_map, eval₂_at_apply] at hfr
+    exact ι.injective (by simpa using hfr)
+  have hfg : p ≤ g.natDegree := Nat.le_of_not_gt hnlt
+  have hassoc : Associated g f :=
+    Polynomial.associated_of_dvd_of_natDegree_le hgf hf0 (by
+      rw [natDegree_polynomial p a]
+      exact hfg)
+  exact hassoc.irreducible hg
+
+end ArtinSchreier
 
 namespace ArtinSchreierDefect
 
@@ -103,32 +229,55 @@ theorem hull_no_root (x : Hull p) : ¬ (standardPolynomial p).IsRoot x := by
   rw [map_sub, map_pow, hy]
   simpa [f, ArtinSchreier.polynomial, sub_eq_zero] using heval
 
-theorem quadratic_irreducible : Irreducible (standardPolynomial 2) := by
-  apply irreducible_of_degree_le_three_of_not_isRoot
-  · simp [standardPolynomial, ArtinSchreier.natDegree_polynomial]
-  · exact hull_no_root 2
+/-- The standard Artin–Schreier polynomial over the perfect hull is irreducible. -/
+theorem standardPolynomial_irreducible : Irreducible (standardPolynomial p) :=
+  ArtinSchreier.irreducible_of_not_isRoot p _ (hull_no_root p)
 
-instance : Fact (Irreducible (standardPolynomial 2)) := ⟨quadratic_irreducible⟩
+instance standardPolynomialIrreducible : Fact (Irreducible (standardPolynomial p)) :=
+  ⟨standardPolynomial_irreducible p⟩
 
-abbrev QuadraticExtension := AdjoinRoot (standardPolynomial 2)
+/-- The degree-`p` Artin–Schreier extension of the perfect hull. -/
+abbrev ArtinSchreierExtension := AdjoinRoot (standardPolynomial p)
 
-instance : FiniteDimensional (Hull 2) QuadraticExtension :=
-  (ArtinSchreier.monic 2 _).finite_adjoinRoot
+instance extensionFiniteDimensional :
+    FiniteDimensional (Hull p) (ArtinSchreierExtension p) :=
+  (ArtinSchreier.monic p _).finite_adjoinRoot
 
-theorem quadratic_degree : Module.finrank (Hull 2) QuadraticExtension = 2 := by
-  change Module.finrank (Hull 2) ((Hull 2)[X] ⧸ Ideal.span {standardPolynomial 2}) = 2
+/-- The Artin–Schreier extension has degree `p`. -/
+theorem extension_degree : Module.finrank (Hull p) (ArtinSchreierExtension p) = p := by
+  change Module.finrank (Hull p) ((Hull p)[X] ⧸ Ideal.span {standardPolynomial p}) = p
   rw [finrank_quotient_span_eq_natDegree]
-  exact ArtinSchreier.natDegree_polynomial 2 _
+  exact ArtinSchreier.natDegree_polynomial p _
 
+/-- The canonical generator satisfies its Artin–Schreier equation. -/
+theorem root_equation :
+    AdjoinRoot.root (standardPolynomial p) ^ p -
+        AdjoinRoot.root (standardPolynomial p) =
+      algebraMap (Hull p) (ArtinSchreierExtension p)
+        (algebraMap (Base p) (Hull p) (inverseT p)) := by
+  have h := AdjoinRoot.mk_self (f := standardPolynomial p)
+  change (AdjoinRoot.mk (standardPolynomial p))
+    (X ^ p - X - C (algebraMap (Base p) (Hull p) (inverseT p))) = 0 at h
+  simp only [map_sub, map_pow, AdjoinRoot.mk_X, AdjoinRoot.mk_C] at h
+  exact sub_eq_zero.mp h
+
+/-- The original irreducibility theorem at `p = 2`. -/
+theorem quadratic_irreducible : Irreducible (standardPolynomial 2) :=
+  standardPolynomial_irreducible 2
+
+/-- The original quadratic extension. -/
+abbrev QuadraticExtension := ArtinSchreierExtension 2
+
+/-- The original degree computation at `p = 2`. -/
+theorem quadratic_degree : Module.finrank (Hull 2) QuadraticExtension = 2 :=
+  extension_degree 2
+
+/-- The original generator equation at `p = 2`. -/
 theorem quadratic_root_equation :
     AdjoinRoot.root (standardPolynomial 2) ^ 2 -
         AdjoinRoot.root (standardPolynomial 2) =
       algebraMap (Hull 2) QuadraticExtension
-        (algebraMap (Base 2) (Hull 2) (inverseT 2)) := by
-  have h := AdjoinRoot.mk_self (f := standardPolynomial 2)
-  change (AdjoinRoot.mk (standardPolynomial 2))
-    (X ^ 2 - X - C (algebraMap (Base 2) (Hull 2) (inverseT 2))) = 0 at h
-  simp only [map_sub, map_pow, AdjoinRoot.mk_X, AdjoinRoot.mk_C] at h
-  exact sub_eq_zero.mp h
+        (algebraMap (Base 2) (Hull 2) (inverseT 2)) :=
+  root_equation 2
 
 end ArtinSchreierDefect
