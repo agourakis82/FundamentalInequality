@@ -12,10 +12,11 @@ node is `ROADMAP_NODE.md`. Nothing in this repository is a pull request against
 Mathlib or against Tau Ceti.
 
 The longer-term goal is a valuation-theory submission to Mathlib built on the
-same API, without Tau Ceti dependencies. The staged plan (contrast example
-`ℚ_p(√p)`, the defectless equality over complete discretely valued fields,
-Ostrowski's sum, the defect, henselian fields, and the upstreaming order) is
-[`ROADMAP.md`](ROADMAP.md).
+same API, without Tau Ceti dependencies. The staged plan is
+[`ROADMAP.md`](ROADMAP.md): the contrast example `ℚ_p(√p)`, the defectless
+equality over complete discretely valued fields, then henselian fields,
+Ostrowski's sum, the defect, ramification theory, and tame extensions,
+following Kuhlmann's book, plus the upstreaming order and naming rules.
 
 ## Statement
 
