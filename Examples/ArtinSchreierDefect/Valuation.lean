@@ -328,7 +328,7 @@ theorem ramificationIdx_eq_one_of_square_surjective
   apply General.ramificationIdx_eq_one_of_pow_surjective 2 K L hsquare hdegree
   have hepos := one_le_ramificationIdx (K := K) (L := L)
   have hfpos := inertiaDeg_pos (K := K) (L := L)
-  have hbound := fundamental_inequality (K := K) (L := L)
+  have hbound := ramificationIdx_mul_inertiaDeg_le_finrank (K := K) (L := L)
   rw [hdegree] at hbound
   have hele : ramificationIdx K L ≤ 2 := by nlinarith
   have he : ramificationIdx K L = 1 ∨ ramificationIdx K L = 2 := by omega
@@ -430,9 +430,10 @@ theorem unique_extension (other : ValuativeRel (Extension p))
   let := h
   have hBase : ValuativeExtension (Base p) (Extension p) :=
     ValuativeExtension.comp (K := Base p) (F := Hull p) (L := Extension p)
-  have : IsRankLeOne (Extension p) := isRankLeOne_of_finite (Hull p) (Extension p)
+  have : IsRankLeOne (Extension p) :=
+    ValuativeRel.IsRankLeOne.of_finiteDimensional (Hull p) (Extension p)
   have : IsNontrivial (Extension p) :=
-    isNontrivial_of_valuativeExtension (Base p) (Extension p)
+    ValuativeRel.IsNontrivial.of_valuativeExtension (Base p) (Extension p)
   have : Algebra.IsAlgebraic (Base p) (Extension p) := extensionAlgebraic p
   have hcmp := unique_valuativeRel_of_complete (K := Base p) (L := Extension p)
     (base_vle_iff_norm p) other hBase

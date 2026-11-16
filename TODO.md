@@ -4,7 +4,7 @@ The Lean development in `FundamentalInequality.lean` proves the simple
 fundamental inequality for one finite valuative field extension:
 
 ```lean
-theorem ValuativeExtension.fundamental_inequality [FiniteDimensional K L] :
+theorem ValuativeExtension.ramificationIdx_mul_inertiaDeg_le_finrank [FiniteDimensional K L] :
     ramificationIdx K L * inertiaDeg K L ≤ Module.finrank K L
 ```
 

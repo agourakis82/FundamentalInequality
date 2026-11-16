@@ -41,7 +41,7 @@ open ValuativeRel ValuativeExtension
 /-- Rank at most one lifts along a finite valuative extension: the image of the
 value group has finite index, and a finite-index extension of a mul-archimedean
 group remains mul-archimedean. -/
-theorem isRankLeOne_of_finite
+theorem _root_.ValuativeRel.IsRankLeOne.of_finiteDimensional
     (K L : Type*) [Field K] [Field L] [Algebra K L]
     [ValuativeRel K] [ValuativeRel L] [ValuativeExtension K L]
     [FiniteDimensional K L] [IsRankLeOne K] : IsRankLeOne L := by
@@ -91,7 +91,7 @@ theorem isRankLeOne_of_finite
   exact this.not_ge hx_le'
 
 /-- Nontriviality of the value group lifts along a valuative extension. -/
-theorem isNontrivial_of_valuativeExtension
+theorem _root_.ValuativeRel.IsNontrivial.of_valuativeExtension
     (K L : Type*) [Field K] [Field L] [Algebra K L]
     [ValuativeRel K] [ValuativeRel L] [ValuativeExtension K L]
     [IsNontrivial K] : IsNontrivial L := by
@@ -177,6 +177,11 @@ theorem unique_valuativeRel_of_complete
   rw [hf_vle, ← Real.rpow_le_rpow_iff (f.nonneg x) (f.nonneg y) hc, ← hx, ← hy]
   simp [g, absoluteValue_rpow_apply]
 
+@[deprecated (since := "2026-11-16")]
+alias isRankLeOne_of_finite := ValuativeRel.IsRankLeOne.of_finiteDimensional
+@[deprecated (since := "2026-11-16")]
+alias isNontrivial_of_valuativeExtension := ValuativeRel.IsNontrivial.of_valuativeExtension
+
 end ArtinSchreierBridge
 
 /-! ### The Ostrowski sum for the unique compatible valuation -/
@@ -217,7 +222,7 @@ theorem sum_le_finrank_of_unique [FiniteDimensional K L] [Fintype (Extensions K 
     (hunique : ∀ w : Extensions K L, w.val = (inferInstance : ValuativeRel L)) :
     (∑ w : Extensions K L, extensionWeight w) ≤ Module.finrank K L := by
   rw [sum_eq_of_unique K L hunique]
-  exact fundamental_inequality
+  exact ramificationIdx_mul_inertiaDeg_le_finrank
 
 theorem sum_strict_of_unique_immediate [Fintype (Extensions K L)]
     (hunique : ∀ w : Extensions K L, w.val = (inferInstance : ValuativeRel L))

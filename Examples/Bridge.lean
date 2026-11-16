@@ -47,7 +47,7 @@ theorem isLocalHom_of_compatible (ι : 𝒪[K] →+* 𝒪[L])
     (hι : ∀ x : 𝒪[K], (ι x : L) = algebraMap K L (x : K)) :
     IsLocalHom ι := by
   rw [local_map_eq_algebraMap ι hι]
-  exact ValuativeExtension.instIsLocalHom_integer K L
+  exact ValuativeExtension.instIsLocalHomInteger K L
 
 /-- The actual residue-field maps agree, including their induced scalar actions. -/
 theorem residueField_map_eq_of_local_map (ι : 𝒪[K] →+* 𝒪[L])

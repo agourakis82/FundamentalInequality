@@ -22,6 +22,14 @@ It must not appear among the `Examples` library roots in `lakefile.toml`.
 
 @[expose] public section
 
+#print axioms ValuativeExtension.ramificationIdx_mul_inertiaDeg_le_finrank
+#print axioms ValuativeExtension.fundamental_inequality
+#print axioms ValuativeExtension.ramificationIdx_mul_ramificationIdx
+#print axioms ValuativeExtension.inertiaDeg_mul_inertiaDeg
+#print axioms ValuativeExtension.comp
+#print axioms ValuativeExtension.instIsLocalHomInteger
+#print axioms ValuativeExtension.instIsScalarTowerInteger
+#print axioms ValuativeExtension.instNormalUnitsValueGroupWithZero
 #print axioms ArtinSchreier.polynomial
 #print axioms ArtinSchreier.eval_polynomial
 #print axioms ArtinSchreier.derivative_polynomial
@@ -42,8 +50,8 @@ It must not appear among the `Examples` library roots in `lakefile.toml`.
 #print axioms ArtinSchreierBridge.isLocalHom_of_compatible
 #print axioms ArtinSchreierBridge.residueField_map_eq_of_local_map
 #print axioms ArtinSchreierBridge.inertiaDeg_eq_of_local_map
-#print axioms ArtinSchreierBridge.isRankLeOne_of_finite
-#print axioms ArtinSchreierBridge.isNontrivial_of_valuativeExtension
+#print axioms ValuativeRel.IsRankLeOne.of_finiteDimensional
+#print axioms ValuativeRel.IsNontrivial.of_valuativeExtension
 #print axioms ArtinSchreierBridge.absoluteValue_rpow
 #print axioms ArtinSchreierBridge.absoluteValue_rpow_apply
 #print axioms ArtinSchreierBridge.unique_valuativeRel_of_complete

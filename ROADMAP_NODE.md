@@ -131,7 +131,7 @@ theorem valuation_independence {I J : Type*} [Finite I] [Finite J]
     (hindep : LinearIndependent 𝓀[K] (fun j ↦ residueOfValOne (hu j))) :
     LinearIndependent K (fun p : I × J ↦ z p.1 * u p.2)
 
-theorem fundamental_inequality [FiniteDimensional K L] :
+theorem ramificationIdx_mul_inertiaDeg_le_finrank [FiniteDimensional K L] :
     ramificationIdx K L * inertiaDeg K L ≤ Module.finrank K L
 
 theorem isImmediate_iff_ramificationIdx_eq_one_and_inertiaDeg_eq_one :
@@ -149,7 +149,7 @@ theorem isImmediate_iff_ramificationIdx_eq_one_and_inertiaDeg_eq_one :
   `IsLocalHom` instance on `algebraMap K L`.
   - *Prerequisites:* `Mathlib: ValuativeExtension`, `ValuativeRel.valuation`,
     `Valuation.HasExtension`, `Valuation.integer`, `IsLocalRing.ResidueField`.
-  - *API:* `valuation_hasExtension`, `instIsLocalHom_integer`.
+  - *API:* `valuation_hasExtension`, `instIsLocalHomInteger`.
 - **The two invariants.** Define `inertiaDeg` and `ramificationIdx` as
   above, and `valueGroupQuotient` as the quotient of `(ValueGroupWithZero L)ˣ`
   by that image. `mapValueGroupWithZero` is strictly monotone, so the induced
@@ -205,7 +205,8 @@ theorem isImmediate_iff_ramificationIdx_eq_one_and_inertiaDeg_eq_one :
   and apply `valuation_independence`. The cardinality of the product is
   `e f`.
   - *Source:* Kuhlmann, Lemma 6.13.
-  - *API:* `fundamental_inequality`.
+  - *API:* `ramificationIdx_mul_inertiaDeg_le_finrank` (alias
+    `fundamental_inequality`).
   - *False generalization:* dropping `FiniteDimensional K L` leaves the
     inequality true in the `0 ≤ _` reading of an infinite invariant, and false
     as a statement that `e` and `f` are finite. The milestone includes

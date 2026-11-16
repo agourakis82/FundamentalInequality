@@ -59,7 +59,8 @@ Both numerical invariants are `ℕ`, with the same convention as `Module.finrank
 * `inertiaDeg_pos`, `ramificationIdx_ne_zero` : finiteness for a finite extension.
 * `exists_max_val_mul` : the valuation form of valuation independence.
 * `valuation_independence` : the same products are `K`-linearly independent.
-* `fundamental_inequality`.
+* `ramificationIdx_mul_inertiaDeg_le_finrank`, also available as
+  `fundamental_inequality`.
 * `isImmediate_iff_ramificationIdx_eq_one_and_inertiaDeg_eq_one`.
 
 ## Implementation notes
@@ -105,7 +106,7 @@ namespace ValuativeExtension
 variable {K L : Type*}
 
 /-- Subgroups of the unit group of a value group are normal. -/
-instance subgroup_normal (K : Type*) [Field K] [ValuativeRel K]
+instance instNormalUnitsValueGroupWithZero (K : Type*) [Field K] [ValuativeRel K]
     (H : Subgroup (ValueGroupWithZero K)ˣ) : H.Normal where
   conj_mem n hn g := by
     rwa [mul_comm g n, mul_inv_cancel_right]
@@ -129,7 +130,7 @@ instance valuation_hasExtension (K L : Type*) [Field K] [Field L] [ValuativeRel 
       Compatible.vle_iff_le (v := valuation K)]
 
 /-- The structure map of valuation rings in a valuative field extension is local. -/
-instance instIsLocalHom_integer (K L : Type*) [Field K] [Field L] [ValuativeRel K]
+instance instIsLocalHomInteger (K L : Type*) [Field K] [Field L] [ValuativeRel K]
     [ValuativeRel L] [Algebra K L] [ValuativeExtension K L] :
     IsLocalHom (algebraMap 𝒪[K] 𝒪[L]) where
   map_nonunit x hx := by
@@ -221,7 +222,7 @@ theorem mapValueGroupWithZero_comp [ValuativeExtension K F] [ValuativeExtension 
   rw [← IsScalarTower.algebraMap_apply K F L]
 
 /-- The valuation rings of a tower of valuative extensions form a scalar tower. -/
-instance instIsScalarTower_integer [ValuativeExtension K F] [ValuativeExtension F L] :
+instance instIsScalarTowerInteger [ValuativeExtension K F] [ValuativeExtension F L] :
     IsScalarTower 𝒪[K] 𝒪[F] 𝒪[L] := by
   refine .of_algebraMap_eq fun x ↦ ?_
   apply Subtype.ext
@@ -804,7 +805,7 @@ theorem one_le_ramificationIdx [FiniteDimensional K L] : 1 ≤ ramificationIdx K
 
 Both factors are positive, so the product is not the `0` recorded for an infinite
 cardinal. -/
-theorem fundamental_inequality [FiniteDimensional K L] :
+theorem ramificationIdx_mul_inertiaDeg_le_finrank [FiniteDimensional K L] :
     ramificationIdx K L * inertiaDeg K L ≤ Module.finrank K L := by
   let e := ramificationIdx K L
   let f := inertiaDeg K L
@@ -861,6 +862,9 @@ theorem fundamental_inequality [FiniteDimensional K L] :
 
 end Field
 
+/-- The fundamental inequality (Kuhlmann, Lemma 6.13), under its classical name. -/
+alias fundamental_inequality := ramificationIdx_mul_inertiaDeg_le_finrank
+
 /-! ### Deprecated aliases
 
 Names used before the rename to Mathlib's `ramificationIdx` / `inertiaDeg`
@@ -883,5 +887,12 @@ alias isImmediate_iff_ramificationIndex_eq_one_and_residueDegree_eq_one :=
 @[deprecated (since := "2026-11-16")] alias residueDegree_pos := inertiaDeg_pos
 @[deprecated (since := "2026-11-16")] alias ramificationIndex_ne_zero := ramificationIdx_ne_zero
 @[deprecated (since := "2026-11-16")] alias one_le_ramificationIndex := one_le_ramificationIdx
+
+@[deprecated (since := "2026-11-16")]
+alias subgroup_normal := instNormalUnitsValueGroupWithZero
+@[deprecated (since := "2026-11-16")]
+alias instIsLocalHom_integer := instIsLocalHomInteger
+@[deprecated (since := "2026-11-16")]
+alias instIsScalarTower_integer := instIsScalarTowerInteger
 
 end ValuativeExtension
