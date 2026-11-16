@@ -21,4 +21,5 @@ name = "FundamentalInequality"
 # Examples.Audit is deliberately not a root: it is an axiom-audit script, not a library module.
 [[lean_lib]]
 name = "Examples"
-roots = ["Examples.ArtinSchreier", "Examples.Bridge", "Examples.ArtinSchreierDefect"]
+roots = ["Examples.ArtinSchreier", "Examples.Bridge", "Examples.ArtinSchreierDefect",
+  "Examples.PadicSqrtP"]
