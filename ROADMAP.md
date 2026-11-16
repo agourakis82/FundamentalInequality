@@ -50,7 +50,8 @@ Difficulty: **S** (a few hundred lines), **M** (one substantial file),
 
 - **Statement.** For a finite `ValuativeExtension K L` of fields,
   `ramificationIdx K L * inertiaDeg K L ≤ Module.finrank K L`
-  (Kuhlmann, Lemma 6.13), with both invariants positive, multiplicative in
+  (`ramificationIdx_mul_inertiaDeg_le_finrank`, alias `fundamental_inequality`;
+  Kuhlmann, Lemma 6.13), with both invariants positive, multiplicative in
   towers (Lemma 6.16), and `e = f = 1` exactly for immediate extensions.
 - **Where.** `FundamentalInequality.lean`; contract in `ROADMAP_NODE.md`.
 - **Examples.** `Examples/ArtinSchreierDefect/` proves, for every prime `p`,
@@ -58,7 +59,8 @@ Difficulty: **S** (a few hundred lines), **M** (one substantial file),
   with `[L:K] = p`, a unique extension of the valuation, and `e = f = 1`: a
   defect extension with Ostrowski sum `1 < p`.
 - **Bridge.** `Examples/Bridge/Completeness.lean` has
-  `isRankLeOne_of_finite`, `isNontrivial_of_valuativeExtension`,
+  `ValuativeRel.IsRankLeOne.of_finiteDimensional`,
+  `ValuativeRel.IsNontrivial.of_valuativeExtension`,
   `unique_valuativeRel_of_complete` (over a complete nonarchimedean normed base,
   a compatible rank-at-most-one relation is the one given by the spectral norm),
   and Ostrowski-sum helpers for the unique-extension case (`Extensions`,
@@ -326,14 +328,15 @@ first in the order below.
 
 Order, each step a separate Mathlib PR that depends only on earlier ones:
 
-1. **Small general lemmas from the bridge.** `isRankLeOne_of_finite` and
-   `isNontrivial_of_valuativeExtension` (renaming proposals below), next to
+1. **Small general lemmas from the bridge.**
+   `ValuativeRel.IsRankLeOne.of_finiteDimensional` and
+   `ValuativeRel.IsNontrivial.of_valuativeExtension`, next to
    `ValuativeExtension` in `Mathlib/RingTheory/Valuation/ValuativeRel/Basic.lean`.
 2. **The invariants.** `ramificationIdx`, `inertiaDeg`, `IsImmediate`, towers,
    and the `ValuativeExtension` identity instance, as a new file under
    `Mathlib/RingTheory/Valuation/ValuativeRel/` (Layer 0 of `ROADMAP_NODE.md`).
-3. **The fundamental inequality.** Lemmas 6.12 and 6.13 (Layers 1–2), in the
-   same directory.
+3. **The fundamental inequality.** Lemmas 6.12 and 6.13 (Layers 1–2),
+   `ramificationIdx_mul_inertiaDeg_le_finrank`, in the same directory.
 4. **Uniqueness over complete rank-one fields.** `unique_valuativeRel_of_complete`,
    near `Mathlib/Analysis/Normed/Unbundled/SpectralNorm.lean` or
    `Mathlib/Topology/Algebra/Valued/ValuativeRel.lean`.
@@ -389,18 +392,25 @@ in `Mathlib/AlgebraicGeometry/ResidueField.lean`), so the old name did not
 clash with anything. The number-theoretic side uses `inertiaDeg`, and Stage 3's
 bridge lemma compares the two directly.
 
-**Proposals, pending Alessandro's decision** (not renamed yet):
+Also done in #5, following the proposals Alessandro approved:
 
-| Current name | Proposed name | Reason |
+| Old name | New name | Reason |
 | --- | --- | --- |
-| `ValuativeExtension.fundamental_inequality` | keep, or `ramificationIdx_mul_inertiaDeg_le_finrank` with the old name as an alias | Mathlib usually names a theorem after its statement; a few classical names (`hensels_lemma`) are kept |
-| `instIsLocalHom_integer`, `instIsScalarTower_integer` | `instIsLocalHomInteger`, `instIsScalarTowerInteger` | Mathlib instance names are `inst` + UpperCamelCase, without underscores |
-| `ValuativeExtension.subgroup_normal` (instance) | an `inst…` name in the same style, or the name Lean generates | same |
-| `ArtinSchreierBridge.isNontrivial_of_valuativeExtension` | `ValuativeRel.IsNontrivial.of_valuativeExtension` | Mathlib has `ValuativeRel.IsRankLeOne.of_valuativeExtension` |
+| `ValuativeExtension.fundamental_inequality` | `ValuativeExtension.ramificationIdx_mul_inertiaDeg_le_finrank`; `fundamental_inequality` stays as a plain alias, not deprecated | Mathlib names a theorem after its statement; the classical name is kept because README and papers cite it |
+| `instIsLocalHom_integer`, `instIsScalarTower_integer` | `instIsLocalHomInteger`, `instIsScalarTowerInteger` | Mathlib instance names are `inst` + UpperCamelCase, without underscores (compare `Valuation.HasExtension.instIsScalarTowerInteger`) |
+| `ValuativeExtension.subgroup_normal` (instance) | `ValuativeExtension.instNormalUnitsValueGroupWithZero` | the name Lean generates for this instance |
+| `ArtinSchreierBridge.isNontrivial_of_valuativeExtension` | `ValuativeRel.IsNontrivial.of_valuativeExtension` | dot notation on the class, like Mathlib's `ValuativeRel.IsRankLeOne.of_valuativeExtension` |
 | `ArtinSchreierBridge.isRankLeOne_of_finite` | `ValuativeRel.IsRankLeOne.of_finiteDimensional` | dot notation on the class; hypothesis named as in Mathlib |
-| new: the defect | `ValuativeExtension.defect` | lowerCamelCase `ℕ`-valued def, like `ramificationIdx` |
-| new: defectless / tame / purely wild extension | `ValuativeExtension.IsDefectless`, `IsTame`, `IsPurelyWild` | Prop-valued, `Is` + UpperCamelCase |
-| new: defectless / tame / henselian field | `ValuativeRel.IsDefectless`, `ValuativeRel.IsTame`, `ValuativeRel.IsHenselian` classes | parallels `ValuativeRel.IsDiscrete`, `IsRankLeOne` |
+
+None of these names exists in Mathlib at the pin.
+
+**Agreed names for future notions** (not defined yet):
+
+| Notion | Name | Reason |
+| --- | --- | --- |
+| the defect `d(L/K)` | `ValuativeExtension.defect` | `ℕ`-valued def in lowerCamelCase, like `ramificationIdx` |
+| defectless / tame / purely wild extension | `ValuativeExtension.IsDefectless`, `ValuativeExtension.IsTame`, `ValuativeExtension.IsPurelyWild` | Prop-valued: `Is` + UpperCamelCase |
+| defectless / tame / henselian field | `ValuativeRel.IsDefectless`, `ValuativeRel.IsTame`, `ValuativeRel.IsHenselian` (classes) | parallels `ValuativeRel.IsDiscrete`, `ValuativeRel.IsRankLeOne` |
 
 **Notation.** Lean code uses Mathlib's notation only: `𝒪[K]`, `𝓀[K]`,
 `ValueGroupWithZero K`, `valuation K`, `Module.finrank K L`; no new notation is
