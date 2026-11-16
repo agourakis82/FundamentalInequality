@@ -6,9 +6,10 @@ Authors: Demetrios Chiuratto Agourakis
 module
 
 public import Examples.ArtinSchreierDefect
+public import Examples.PadicSqrtP
 
 /-!
-# Axiom audit for the Artin–Schreier example
+# Axiom audit for the worked examples
 
 This file is deliberately not a library root. It only prints axiom dependencies
 and can be compiled with
@@ -177,3 +178,14 @@ It must not appear among the `Examples` library roots in `lakefile.toml`.
 #print axioms ArtinSchreierDefect.Quadratic.hullResiduePerfect
 #print axioms ArtinSchreierDefect.Quadratic.concrete_inertiaDeg
 #print axioms ArtinSchreierDefect.Quadratic.quadratic_sum_strict
+#print axioms PadicSqrtP.integerPolynomial_isEisenstein
+#print axioms PadicSqrtP.polynomial_irreducible
+#print axioms PadicSqrtP.finrank_eq_two
+#print axioms PadicSqrtP.root_sq
+#print axioms PadicSqrtP.baseExtensionValuativeExtension
+#print axioms PadicSqrtP.unique_extension
+#print axioms PadicSqrtP.extension_eq_spectral
+#print axioms PadicSqrtP.sqrtP_value_not_mem_range
+#print axioms PadicSqrtP.ramificationIdx_eq_two
+#print axioms PadicSqrtP.inertiaDeg_eq_one
+#print axioms PadicSqrtP.ramificationIdx_mul_inertiaDeg_eq_finrank

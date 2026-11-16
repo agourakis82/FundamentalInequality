@@ -2,7 +2,7 @@
 
 This file plans how the repository grows from the fundamental inequality into
 a larger body of valuation theory intended for Mathlib. It is a plan, not a
-record of finished work: only Stage 1 is done. The long-term target is the
+record of finished work: Stages 1 and 2 are done. The long-term target is the
 theory of the defect and of tame extensions, following Kuhlmann's book.
 
 Two rules hold for every stage.
@@ -37,7 +37,7 @@ Difficulty: **S** (a few hundred lines), **M** (one substantial file),
 | Stage | Content | Status | Difficulty |
 | --- | --- | --- | --- |
 | 1 | `e`, `f`, towers, fundamental inequality; Artin–Schreier defect example for every prime | done | — |
-| 2 | Contrast example `ℚ_p(√p)`: `e = 2`, `f = 1`, `e f = [L:K]` | next | M |
+| 2 | Contrast example `ℚ_p(√p)`: `e = 2`, `f = 1`, `e f = [L:K]` | done | M |
 | 3 | Defectless equality `e f = [L:K]` over complete discretely valued fields | next | L |
 | 4 | Henselian valued fields: uniqueness of extension, henselization (Kuhlmann §7.8, Ch. 9) | planned | XL |
 | 5 | Ostrowski's sum `∑ eᵢ fᵢ ≤ [L:K]` over all extensions (Kuhlmann §7.9) | planned | L |
@@ -72,7 +72,7 @@ Difficulty: **S** (a few hundred lines), **M** (one substantial file),
   (`Valuation.HasExtension`), `Mathlib/Analysis/Normed/Unbundled/SpectralNorm.lean`
   (`spectralNorm_unique_field_norm_ext`), `Mathlib/RingTheory/Valuation/RankOne.lean`.
 
-## Stage 2: the contrast example `ℚ_p(√p)` (next)
+## Stage 2: the contrast example `ℚ_p(√p)` (done)
 
 - **Statement.** For `L = ℚ_p(√p)`, i.e. `ℚ_[p]` adjoined a root of `X² - p`,
   with the valuation extending the `p`-adic one: `[L:K] = 2`, `e = 2`, `f = 1`,
@@ -90,9 +90,9 @@ Difficulty: **S** (a few hundred lines), **M** (one substantial file),
   `Mathlib/RingTheory/Polynomial/Eisenstein/Criterion.lean`
   (`irreducible_of_eisenstein_criterion`); `IsDiscreteValuationRing ℤ_[p]` in
   `Mathlib/NumberTheory/Padics/PadicIntegers.lean`.
-- **Missing.** A ready-made `ValuativeRel` on a finite extension of `ℚ_[p]`;
-  it has to be built (spectral norm or `Valuation.RankOne` route, as in the
-  Artin–Schreier example).
+- **Implemented.** `Examples/PadicSqrtP/` builds the spectral `ValuativeRel`,
+  proves uniqueness, and computes the two invariants from the fundamental
+  inequality without a general equality theorem.
 - **Difficulty.** M. Offered by Demetrios Chiuratto Agourakis.
 - **Role.** First instance of Stage 3, and a test case that the Stage 3
   statement must reproduce.
