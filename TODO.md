@@ -33,9 +33,12 @@ is [`ROADMAP_NODE.md`](ROADMAP_NODE.md). It targets Kuhlmann's Lemmas 6.12,
 Mathlib already contains the ideal-theoretic theory
 (`Ideal.ramificationIdx`, `Ideal.inertiaDeg`,
 `Ideal.sum_ramification_inertia_eq_finrank`, and
-`NumberTheory/RamificationInertia/Valuation.lean`). `ValuationSubring` inertia
+`RingTheory/DedekindDomain/AdicValuation/Ramification.lean`). `ValuationSubring` inertia
 and decomposition subgroups are Galois groups, not `e` and `f`. This
 development does not restate those results.
+
+The staged plan beyond this file, toward a Mathlib submission, is
+[`ROADMAP.md`](ROADMAP.md).
 
 ## Boundary
 

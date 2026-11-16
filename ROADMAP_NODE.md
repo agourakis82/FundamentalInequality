@@ -1,5 +1,8 @@
 # Roadmap: the fundamental inequality for valuative extensions
 
+This node is Stage 1 of the repository plan in [`ROADMAP.md`](ROADMAP.md).
+Later stages are outside this node's scope.
+
 This roadmap owns the ramification index and the residue degree of a general
 valuative field extension, their finiteness for a finite extension,
 multiplicativity in towers, and the fundamental inequality
@@ -15,8 +18,11 @@ of nonarchimedean local fields, and the equality
 `TauCeti/NumberTheory/LocalField/InertiaDegree.lean`). This roadmap does not
 reimplement those declarations and does not restate that equality. Mathlib owns
 the ideal-theoretic pair `Ideal.ramificationIdx` / `Ideal.inertiaDeg`, the
-equality `Ideal.sum_ramification_inertia_eq_finrank`, and the valuation form in
-`Mathlib/NumberTheory/RamificationInertia/Valuation.lean`. The subgroups
+equality `Ideal.sum_ramification_inertia_eq_finrank`
+(`Mathlib/RingTheory/RamificationInertia/Basic.lean`), and the valuation form in
+`Mathlib/RingTheory/DedekindDomain/AdicValuation/Ramification.lean` (formerly
+`Mathlib/NumberTheory/RamificationInertia/Valuation.lean`, a deprecated module
+at the pin). The subgroups
 `ValuationSubring.decompositionSubgroup` and `ValuationSubring.inertiaSubgroup`
 are Galois groups. None of those is an alias of the invariants below.
 

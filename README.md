@@ -11,6 +11,13 @@ The development is a sandbox aimed at a Tau Ceti roadmap node. A draft of that
 node is `ROADMAP_NODE.md`. Nothing in this repository is a pull request against
 Mathlib or against Tau Ceti.
 
+The longer-term goal is a valuation-theory submission to Mathlib built on the
+same API, without Tau Ceti dependencies. The staged plan is
+[`ROADMAP.md`](ROADMAP.md): the contrast example `ℚ_p(√p)`, the defectless
+equality over complete discretely valued fields, then henselian fields,
+Ostrowski's sum, the defect, ramification theory, and tame extensions,
+following Kuhlmann's book, plus the upstreaming order and naming rules.
+
 ## Statement
 
 For a finite extension `L/K` of fields carrying valuative relations, with
@@ -62,7 +69,8 @@ Ostrowski's sum over several extensions of one valuation, the defect, equality
 in the defectless case, or a comparison with `Ideal.ramificationIdx` and
 `Ideal.inertiaDeg`. The equality `e f = [L:K]` for finite extensions of
 nonarchimedean local fields is `TauCeti.ramificationIndex_mul_inertiaDegree`,
-owned by the local-fields roadmap, and is not restated here.
+owned by the local-fields roadmap, and is not restated here. The planned
+work beyond this scope is in [`ROADMAP.md`](ROADMAP.md).
 
 ## References
 
