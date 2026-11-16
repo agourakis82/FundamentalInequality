@@ -899,8 +899,8 @@ instance hullResiduePerfect : PerfectField 𝓀[Hull p] := by
   exact PerfectRing.toPerfectField 𝓀[Hull p] p
 
 /-- The residue degree of the Artin--Schreier defect extension is one for every prime. -/
-theorem concrete_residueDegree : residueDegree (Hull p) (Extension p) = 1 := by
-  refine residueDegree_eq_one_iff.mpr ?_
+theorem concrete_inertiaDeg : inertiaDeg (Hull p) (Extension p) = 1 := by
+  refine inertiaDeg_eq_one_iff.mpr ?_
   intro z
   obtain ⟨u, hu⟩ := Ideal.Quotient.mk_surjective (I := 𝓂[Extension p]) z
   set x : Extension p := (u : Extension p)
@@ -956,13 +956,15 @@ theorem concrete_residueDegree : residueDegree (Hull p) (Extension p) = 1 := by
 theorem sum_strict :
     let := extensionFintype_of_unique (Hull p) (Extension p) (extension_eq_spectral p)
     (∑ w : Extensions (Hull p) (Extension p), extensionWeight w) =
-      ramificationIndex (Hull p) (Extension p) * residueDegree (Hull p) (Extension p) ∧
-    ramificationIndex (Hull p) (Extension p) * residueDegree (Hull p) (Extension p) = 1 ∧
+      ramificationIdx (Hull p) (Extension p) * inertiaDeg (Hull p) (Extension p) ∧
+    ramificationIdx (Hull p) (Extension p) * inertiaDeg (Hull p) (Extension p) = 1 ∧
     (∑ w : Extensions (Hull p) (Extension p), extensionWeight w) < p ∧
     p = Module.finrank (Hull p) (Extension p) := by
   let := extensionFintype_of_unique (Hull p) (Extension p) (extension_eq_spectral p)
   exact sum_strict_of_unique_immediate (Hull p) (Extension p) (extension_eq_spectral p) p
-    (Fact.out : p.Prime).one_lt (concrete_ramificationIndex p) (concrete_residueDegree p)
+    (Fact.out : p.Prime).one_lt (concrete_ramificationIdx p) (concrete_inertiaDeg p)
     (ArtinSchreierDefect.extension_degree p)
+
+@[deprecated (since := "2026-11-16")] alias concrete_residueDegree := concrete_inertiaDeg
 
 end ArtinSchreierDefect.General

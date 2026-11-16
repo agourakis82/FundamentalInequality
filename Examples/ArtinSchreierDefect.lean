@@ -18,7 +18,7 @@ This is the root module for the example. The development is split as follows:
   completeness of the base, and the abstract Ostrowski-sum comparison.
 * `Examples.ArtinSchreierDefect.Valuation`: spectral valuations, ramification
   index one, and uniqueness of a compatible valuative relation, using
-  `ValuativeExtension.tower` for compatibility along the tower.
+  `ValuativeExtension.comp` for compatibility along the tower.
 * `Examples.ArtinSchreierDefect.ResidueGeneral`: residue degree one and the
   unconditional Ostrowski sum `Σ eᵢfᵢ = ef = 1 < p = [L:K]`.
 * `Examples.ArtinSchreierDefect.Residue`: the backwards-compatible quadratic

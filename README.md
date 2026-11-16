@@ -22,27 +22,36 @@ For a finite extension `L/K` of fields carrying valuative relations, with
 
 Both factors are finite (recorded as positive natural numbers). Here
 
-- `residueDegree K L` is `Module.finrank 𝓀[K] 𝓀[L]`,
-- `ramificationIndex K L` is the subgroup index of the image of
+- `inertiaDeg K L` is `Module.finrank 𝓀[K] 𝓀[L]`,
+- `ramificationIdx K L` is the subgroup index of the image of
   `(ValueGroupWithZero K)ˣ` under `mapValueGroupWithZero K L`.
 
 An infinite index or an infinite residue extension is recorded as `0`, matching
 `Subgroup.index` and `Module.finrank`.
 
+The names follow Mathlib's `Ideal.ramificationIdx` / `Ideal.inertiaDeg` and
+Mathlib's naming conventions. The earlier names (`ramificationIndex`,
+`residueDegree`, `ramificationIndex_mul`, `residueDegree_mul`, `tower`,
+`instIsLocalHom_integer`, `isRankLeOne_of_finite`, …) remain as deprecated
+aliases (since 2026-11-16). The main theorem is
+`ramificationIdx_mul_inertiaDeg_le_finrank`; `fundamental_inequality` is a
+permanent alias for it.
+
 ## Main declarations
 
 | Name | Role |
 | --- | --- |
-| `residueDegree`, `ramificationIndex` | `f(L/K)` and `e(L/K)` |
+| `inertiaDeg`, `ramificationIdx` | `f(L/K)` and `e(L/K)` |
+| `comp` | a tower of valuative extensions is a valuative extension |
 | `IsImmediate` | value group and residue field both stay the same |
-| `residueDegree_self`, `ramificationIndex_self` | identity extension: `e = f = 1` |
-| `residueDegree_mul`, `ramificationIndex_mul` | multiplicativity in a tower |
-| `isImmediate_iff_ramificationIndex_eq_one_and_residueDegree_eq_one` | immediate iff `e = f = 1` |
+| `inertiaDeg_self`, `ramificationIdx_self` | identity extension: `e = f = 1` |
+| `inertiaDeg_mul_inertiaDeg`, `ramificationIdx_mul_ramificationIdx` | multiplicativity in a tower |
+| `isImmediate_iff_ramificationIdx_eq_one_and_inertiaDeg_eq_one` | immediate iff `e = f = 1` |
 | `exists_max_val_mul`, `valuation_independence` | Kuhlmann's Lemma 6.12 |
 | `finite_residueField_extension`, `finite_valueGroup_quotient` | finiteness |
-| `fundamental_inequality` | Kuhlmann's Lemma 6.13 |
+| `ramificationIdx_mul_inertiaDeg_le_finrank` (alias `fundamental_inequality`) | Kuhlmann's Lemma 6.13 |
 
-The middle factor of `ramificationIndex_mul` is `ramificationIndex K F`, the
+The middle factor of `ramificationIdx_mul_ramificationIdx` is `ramificationIdx K F`, the
 index in `(ValueGroupWithZero F)ˣ`, transported into `(ValueGroupWithZero L)ˣ`
 along `mapValueGroupWithZero F L` by `Subgroup.index_map_of_injective`.
 

@@ -11,9 +11,9 @@ public import FundamentalInequality
 # Compatibility of local residue-field maps with Linzi's residue degree
 
 This file compares an explicitly supplied compatible local map of valuation rings
-with the canonical structure map used by `ValuativeExtension.residueDegree`.
+with the canonical structure map used by `ValuativeExtension.inertiaDeg`.
 The ramification index is not redefined: later example files use
-`ValuativeExtension.ramificationIndex` directly.
+`ValuativeExtension.ramificationIdx` directly.
 -/
 
 @[expose] public section
@@ -24,7 +24,7 @@ open scoped ValuativeRel
 namespace ArtinSchreierBridge
 
 /-- Residue degree computed from an arbitrary compatible local map of valuation rings. -/
-def localResidueDegree {K L : Type*} [Field K] [Field L]
+def localInertiaDeg {K L : Type*} [Field K] [Field L]
     [ValuativeRel K] [ValuativeRel L]
     (ι : 𝒪[K] →+* 𝒪[L]) [IsLocalHom ι] : ℕ :=
   letI := (IsLocalRing.ResidueField.map ι).toAlgebra
@@ -47,7 +47,7 @@ theorem isLocalHom_of_compatible (ι : 𝒪[K] →+* 𝒪[L])
     (hι : ∀ x : 𝒪[K], (ι x : L) = algebraMap K L (x : K)) :
     IsLocalHom ι := by
   rw [local_map_eq_algebraMap ι hι]
-  exact ValuativeExtension.instIsLocalHom_integer K L
+  exact ValuativeExtension.instIsLocalHomInteger K L
 
 /-- The actual residue-field maps agree, including their induced scalar actions. -/
 theorem residueField_map_eq_of_local_map (ι : 𝒪[K] →+* 𝒪[L])
@@ -59,13 +59,13 @@ theorem residueField_map_eq_of_local_map (ι : 𝒪[K] →+* 𝒪[L])
   rfl
 
 /-- The previous finrank via a compatible local map is Linzi's residue degree. -/
-theorem residueDegree_eq_of_local_map (ι : 𝒪[K] →+* 𝒪[L])
+theorem inertiaDeg_eq_of_local_map (ι : 𝒪[K] →+* 𝒪[L])
     [IsLocalHom ι]
     (hι : ∀ x : 𝒪[K], (ι x : L) = algebraMap K L (x : K)) :
-    localResidueDegree ι = ValuativeExtension.residueDegree K L := by
+    localInertiaDeg ι = ValuativeExtension.inertiaDeg K L := by
   have h := local_map_eq_algebraMap ι hι
   subst ι
-  unfold localResidueDegree ValuativeExtension.residueDegree
+  unfold localInertiaDeg ValuativeExtension.inertiaDeg
   congr 1
   apply Module.ext'
   intro r x
@@ -75,5 +75,14 @@ theorem residueDegree_eq_of_local_map (ι : 𝒪[K] →+* 𝒪[L])
   change IsLocalRing.ResidueField.map (algebraMap 𝒪[K] 𝒪[L])
       (IsLocalRing.residue 𝒪[K] r) * IsLocalRing.residue 𝒪[L] x = _
   rw [IsLocalRing.ResidueField.map_residue, ← map_mul]
+
+/-! ### Deprecated aliases
+
+Names used before the rename to Mathlib's `ramificationIdx` / `inertiaDeg`
+conventions. -/
+
+@[deprecated (since := "2026-11-16")] alias localResidueDegree := localInertiaDeg
+@[deprecated (since := "2026-11-16")]
+alias residueDegree_eq_of_local_map := inertiaDeg_eq_of_local_map
 
 end ArtinSchreierBridge

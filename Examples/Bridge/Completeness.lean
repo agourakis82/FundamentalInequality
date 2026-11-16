@@ -22,7 +22,7 @@ represented by the spectral norm. The Ostrowski sum then reduces to a single
 term when uniqueness is known.
 
 This file does not re-prove transitivity of `ValuativeExtension`: callers
-use `ValuativeExtension.tower`.
+use `ValuativeExtension.comp`.
 -/
 
 @[expose] public section
@@ -41,28 +41,28 @@ open ValuativeRel ValuativeExtension
 /-- Rank at most one lifts along a finite valuative extension: the image of the
 value group has finite index, and a finite-index extension of a mul-archimedean
 group remains mul-archimedean. -/
-theorem isRankLeOne_of_finite
+theorem _root_.ValuativeRel.IsRankLeOne.of_finiteDimensional
     (K L : Type*) [Field K] [Field L] [Algebra K L]
     [ValuativeRel K] [ValuativeRel L] [ValuativeExtension K L]
     [FiniteDimensional K L] [IsRankLeOne K] : IsRankLeOne L := by
   rw [ValuativeRel.isRankLeOne_iff_mulArchimedean] at *
   refine ⟨fun x {y} hy => ?_⟩
-  have he : ramificationIndex K L ≠ 0 := ramificationIndex_ne_zero (K := K) (L := L)
-  have hepos : 0 < ramificationIndex K L := Nat.pos_of_ne_zero he
+  have he : ramificationIdx K L ≠ 0 := ramificationIdx_ne_zero (K := K) (L := L)
+  have hepos : 0 < ramificationIdx K L := Nat.pos_of_ne_zero he
   rcases eq_or_ne x 0 with rfl | hx
   · exact ⟨1, zero_le⟩
   have hy0 : y ≠ 0 := by
     rintro rfl
     exact not_lt_zero hy
-  have hy_pow_lt : 1 < y ^ ramificationIndex K L :=
+  have hy_pow_lt : 1 < y ^ ramificationIdx K L :=
     one_lt_pow₀ hy hepos.ne.symm
   let H := (Units.map (mapValueGroupWithZero K L).toMonoidHom).range
-  have hxe : (Units.mk0 x hx) ^ ramificationIndex K L ∈ H := Subgroup.pow_index_mem H _
-  have hye : (Units.mk0 y hy0) ^ ramificationIndex K L ∈ H := Subgroup.pow_index_mem H _
+  have hxe : (Units.mk0 x hx) ^ ramificationIdx K L ∈ H := Subgroup.pow_index_mem H _
+  have hye : (Units.mk0 y hy0) ^ ramificationIdx K L ∈ H := Subgroup.pow_index_mem H _
   obtain ⟨v, hv⟩ := hye
   have hv1 : 1 < (v : ValueGroupWithZero K) := by
     have hv' : mapValueGroupWithZero K L (v : ValueGroupWithZero K) =
-        y ^ ramificationIndex K L := by
+        y ^ ramificationIdx K L := by
       simpa [Units.val_pow_eq_pow_val] using congrArg Units.val hv
     have hlt : mapValueGroupWithZero K L (1 : ValueGroupWithZero K) <
         mapValueGroupWithZero K L (v : ValueGroupWithZero K) := by
@@ -70,28 +70,28 @@ theorem isRankLeOne_of_finite
     exact (mapValueGroupWithZero_strictMono (A := K) (B := L)).lt_iff_lt.mp hlt
   obtain ⟨u, hu⟩ := hxe
   obtain ⟨n, hn⟩ := MulArchimedean.arch (u : ValueGroupWithZero K) hv1
-  have hx_le' : x ^ ramificationIndex K L ≤ (y ^ n) ^ ramificationIndex K L := by
+  have hx_le' : x ^ ramificationIdx K L ≤ (y ^ n) ^ ramificationIdx K L := by
     have hφ : mapValueGroupWithZero K L (u : ValueGroupWithZero K) ≤
         mapValueGroupWithZero K L ((v : ValueGroupWithZero K) ^ n) :=
       (mapValueGroupWithZero_strictMono (A := K) (B := L)).le_iff_le.mpr hn
     have hu' : mapValueGroupWithZero K L (u : ValueGroupWithZero K) =
-        x ^ ramificationIndex K L := by
+        x ^ ramificationIdx K L := by
       simpa [Units.val_pow_eq_pow_val] using congrArg Units.val hu
     have hv' : mapValueGroupWithZero K L (v : ValueGroupWithZero K) =
-        y ^ ramificationIndex K L := by
+        y ^ ramificationIdx K L := by
       simpa [Units.val_pow_eq_pow_val] using congrArg Units.val hv
-    have : x ^ ramificationIndex K L ≤ (y ^ ramificationIndex K L) ^ n := by
+    have : x ^ ramificationIdx K L ≤ (y ^ ramificationIdx K L) ^ n := by
       simpa [hu', hv', map_pow] using hφ
     simpa [← pow_mul, mul_comm n] using this
   refine ⟨n, ?_⟩
   by_contra h
   have hlt : y ^ n < x := lt_of_not_ge h
-  have : (y ^ n) ^ ramificationIndex K L < x ^ ramificationIndex K L :=
+  have : (y ^ n) ^ ramificationIdx K L < x ^ ramificationIdx K L :=
     pow_lt_pow_left₀ (ha := (zero_le : 0 ≤ y ^ n)) hlt he
   exact this.not_ge hx_le'
 
 /-- Nontriviality of the value group lifts along a valuative extension. -/
-theorem isNontrivial_of_valuativeExtension
+theorem _root_.ValuativeRel.IsNontrivial.of_valuativeExtension
     (K L : Type*) [Field K] [Field L] [Algebra K L]
     [ValuativeRel K] [ValuativeRel L] [ValuativeExtension K L]
     [IsNontrivial K] : IsNontrivial L := by
@@ -177,6 +177,11 @@ theorem unique_valuativeRel_of_complete
   rw [hf_vle, ← Real.rpow_le_rpow_iff (f.nonneg x) (f.nonneg y) hc, ← hx, ← hy]
   simp [g, absoluteValue_rpow_apply]
 
+@[deprecated (since := "2026-11-16")]
+alias isRankLeOne_of_finite := ValuativeRel.IsRankLeOne.of_finiteDimensional
+@[deprecated (since := "2026-11-16")]
+alias isNontrivial_of_valuativeExtension := ValuativeRel.IsNontrivial.of_valuativeExtension
+
 end ArtinSchreierBridge
 
 /-! ### The Ostrowski sum for the unique compatible valuation -/
@@ -194,7 +199,7 @@ def extensionWeight {K L : Type*} [Field K] [Field L] [Algebra K L]
     [ValuativeRel K] (w : Extensions K L) : ℕ :=
   letI := w.val
   letI := w.property
-  ramificationIndex K L * residueDegree K L
+  ramificationIdx K L * inertiaDeg K L
 
 variable (K L : Type*) [Field K] [Field L] [Algebra K L]
   [ValuativeRel K] [ValuativeRel L] [ValuativeExtension K L]
@@ -203,7 +208,7 @@ variable (K L : Type*) [Field K] [Field L] [Algebra K L]
 theorem sum_eq_of_unique [Fintype (Extensions K L)]
     (hunique : ∀ w : Extensions K L, w.val = (inferInstance : ValuativeRel L)) :
     (∑ w : Extensions K L, extensionWeight w) =
-      ramificationIndex K L * residueDegree K L := by
+      ramificationIdx K L * inertiaDeg K L := by
   classical
   let w₀ : Extensions K L := ⟨inferInstance, inferInstance⟩
   have hw : ∀ w : Extensions K L, w = w₀ := fun w => Subtype.ext (hunique w)
@@ -217,15 +222,15 @@ theorem sum_le_finrank_of_unique [FiniteDimensional K L] [Fintype (Extensions K 
     (hunique : ∀ w : Extensions K L, w.val = (inferInstance : ValuativeRel L)) :
     (∑ w : Extensions K L, extensionWeight w) ≤ Module.finrank K L := by
   rw [sum_eq_of_unique K L hunique]
-  exact fundamental_inequality
+  exact ramificationIdx_mul_inertiaDeg_le_finrank
 
 theorem sum_strict_of_unique_immediate [Fintype (Extensions K L)]
     (hunique : ∀ w : Extensions K L, w.val = (inferInstance : ValuativeRel L))
     (q : ℕ) (hq : 1 < q)
-    (he : ramificationIndex K L = 1) (hf : residueDegree K L = 1)
+    (he : ramificationIdx K L = 1) (hf : inertiaDeg K L = 1)
     (hn : Module.finrank K L = q) :
-    (∑ w : Extensions K L, extensionWeight w) = ramificationIndex K L * residueDegree K L ∧
-    ramificationIndex K L * residueDegree K L = 1 ∧
+    (∑ w : Extensions K L, extensionWeight w) = ramificationIdx K L * inertiaDeg K L ∧
+    ramificationIdx K L * inertiaDeg K L = 1 ∧
     (∑ w : Extensions K L, extensionWeight w) < q ∧ q = Module.finrank K L := by
   have hs := sum_eq_of_unique K L hunique
   exact ⟨hs, by simp [he, hf], by simpa [hs, he, hf] using hq, hn.symm⟩

@@ -4,11 +4,11 @@ The Lean development in `FundamentalInequality.lean` proves the simple
 fundamental inequality for one finite valuative field extension:
 
 ```lean
-theorem ValuativeExtension.fundamental_inequality [FiniteDimensional K L] :
-    ramificationIndex K L * residueDegree K L ≤ Module.finrank K L
+theorem ValuativeExtension.ramificationIdx_mul_inertiaDeg_le_finrank [FiniteDimensional K L] :
+    ramificationIdx K L * inertiaDeg K L ≤ Module.finrank K L
 ```
 
-`residueDegree K L` is `Module.finrank 𝓀[K] 𝓀[L]`. `ramificationIndex K L` is
+`inertiaDeg K L` is `Module.finrank 𝓀[K] 𝓀[L]`. `ramificationIdx K L` is
 the index of the image of `(ValueGroupWithZero K)ˣ` under
 `mapValueGroupWithZero K L`. Both are positive when `L/K` is finite. The
 identity extension has `e = f = 1`, both invariants multiply in a tower, and an
