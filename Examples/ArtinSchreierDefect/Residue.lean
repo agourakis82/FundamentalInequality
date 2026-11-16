@@ -667,8 +667,8 @@ instance hullResiduePerfect : PerfectField 𝓀[Hull] := by
   exact PerfectRing.toPerfectField 𝓀[Hull] 2
 
 /-- The residue degree of the constructed valuation is one. -/
-theorem concrete_residueDegree : residueDegree Hull Extension = 1 :=
-  General.concrete_residueDegree 2
+theorem concrete_inertiaDeg : inertiaDeg Hull Extension = 1 :=
+  General.concrete_inertiaDeg 2
 
 /-- The Ostrowski sum for the unique compatible valuation on the quadratic
 Artin–Schreier extension.
@@ -678,12 +678,14 @@ degree one are all proved. Consequently `Σ eᵢfᵢ = ef = 1 < 2 = [L:K]`. -/
 theorem quadratic_sum_strict :
     let := extensionFintype_of_unique Hull Extension extension_eq_spectral
     (∑ w : Extensions Hull Extension, extensionWeight w) =
-      ramificationIndex Hull Extension * residueDegree Hull Extension ∧
-    ramificationIndex Hull Extension * residueDegree Hull Extension = 1 ∧
+      ramificationIdx Hull Extension * inertiaDeg Hull Extension ∧
+    ramificationIdx Hull Extension * inertiaDeg Hull Extension = 1 ∧
     (∑ w : Extensions Hull Extension, extensionWeight w) < 2 ∧
     2 = Module.finrank Hull Extension := by
   simpa using General.sum_strict 2
 
+
+@[deprecated (since := "2026-11-16")] alias concrete_residueDegree := concrete_inertiaDeg
 
 end ArtinSchreierDefect.Quadratic
 
@@ -704,18 +706,18 @@ namespace General
 /-- The numerical defect quotient is the prime extension degree. -/
 theorem defect_quotient (p : ℕ) [Fact p.Prime] :
     finrankQuotient (Module.finrank (Hull p) (Extension p))
-      (ramificationIndex (Hull p) (Extension p))
-      (residueDegree (Hull p) (Extension p)) = p := by
+      (ramificationIdx (Hull p) (Extension p))
+      (inertiaDeg (Hull p) (Extension p)) = p := by
   simp [finrankQuotient, ArtinSchreierDefect.extension_degree,
-    concrete_ramificationIndex, concrete_residueDegree]
+    concrete_ramificationIdx, concrete_inertiaDeg]
 
 end General
 
 /-- Arithmetic consequence of the proved identities `e = 1`, `f = 1`, and `[L:K] = 2`. -/
 theorem quadratic_defect_quotient :
     finrankQuotient (Module.finrank Quadratic.Hull Quadratic.Extension)
-      (ramificationIndex Quadratic.Hull Quadratic.Extension)
-      (residueDegree Quadratic.Hull Quadratic.Extension) = 2 := by
+      (ramificationIdx Quadratic.Hull Quadratic.Extension)
+      (inertiaDeg Quadratic.Hull Quadratic.Extension) = 2 := by
   simpa using General.defect_quotient 2
 
 end ArtinSchreierDefect

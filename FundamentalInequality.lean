@@ -41,8 +41,8 @@ for a finite extension, including finiteness of both invariants.
 
 ## Main definitions
 
-* `ValuativeExtension.residueDegree` : the residue degree `f(L/K) = [𝓀[L] : 𝓀[K]]`.
-* `ValuativeExtension.ramificationIndex` : the ramification index `e(L/K)`, the index
+* `ValuativeExtension.inertiaDeg` : the inertia (residue) degree `f(L/K) = [𝓀[L] : 𝓀[K]]`.
+* `ValuativeExtension.ramificationIdx` : the ramification index `e(L/K)`, the index
   of the image of `(ValueGroupWithZero K)ˣ` under `mapValueGroupWithZero`.
 * `ValuativeExtension.IsImmediate` : the value-group map and the residue-field map
   are both surjective.
@@ -52,15 +52,15 @@ Both numerical invariants are `ℕ`, with the same convention as `Module.finrank
 
 ## Main results
 
-* `residueDegree_self`, `ramificationIndex_self` : the identity extension has `e = f = 1`.
-* `residueDegree_mul`, `ramificationIndex_mul` : multiplicativity in towers.
-  The middle factor of `ramificationIndex_mul` is `ramificationIndex K F`, the index
+* `inertiaDeg_self`, `ramificationIdx_self` : the identity extension has `e = f = 1`.
+* `inertiaDeg_mul_inertiaDeg`, `ramificationIdx_mul_ramificationIdx` : multiplicativity in towers.
+  The middle factor of `ramificationIdx_mul_ramificationIdx` is `ramificationIdx K F`, the index
   computed in `ValueGroupWithZero F` and transported along `mapValueGroupWithZero F L`.
-* `residueDegree_pos`, `ramificationIndex_ne_zero` : finiteness for a finite extension.
+* `inertiaDeg_pos`, `ramificationIdx_ne_zero` : finiteness for a finite extension.
 * `exists_max_val_mul` : the valuation form of valuation independence.
 * `valuation_independence` : the same products are `K`-linearly independent.
 * `fundamental_inequality`.
-* `isImmediate_iff_ramificationIndex_eq_one_and_residueDegree_eq_one`.
+* `isImmediate_iff_ramificationIdx_eq_one_and_inertiaDeg_eq_one`.
 
 ## Implementation notes
 
@@ -141,19 +141,21 @@ instance instIsLocalHom_integer (K L : Type*) [Field K] [Field L] [ValuativeRel 
 
 /-! ### Definitions -/
 
-/-- The residue degree `f(L/K) = [𝓀[L] : 𝓀[K]]`.
+/-- The inertia degree (residue degree) `f(L/K) = [𝓀[L] : 𝓀[K]]`.
+
+The name follows Mathlib's `Ideal.inertiaDeg`.
 
 This is `0` when the residue-field extension is infinite, matching `Module.finrank`. -/
-def residueDegree (K L : Type*) [Field K] [Field L] [ValuativeRel K] [ValuativeRel L]
+def inertiaDeg (K L : Type*) [Field K] [Field L] [ValuativeRel K] [ValuativeRel L]
     [Algebra K L] [ValuativeExtension K L] : ℕ :=
   Module.finrank 𝓀[K] 𝓀[L]
 
-/-- The ramification index `e(L/K)`.
+/-- The ramification index `e(L/K)`. The name follows Mathlib's `Ideal.ramificationIdx`.
 
 It is the index of the image of `(ValueGroupWithZero K)ˣ` in `(ValueGroupWithZero L)ˣ`
 under `mapValueGroupWithZero`. This is `0` when the index is infinite, matching
 `Subgroup.index`. -/
-def ramificationIndex (K L : Type*) [Field K] [Field L] [ValuativeRel K] [ValuativeRel L]
+def ramificationIdx (K L : Type*) [Field K] [Field L] [ValuativeRel K] [ValuativeRel L]
     [Algebra K L] [ValuativeExtension K L] : ℕ :=
   (Units.map (mapValueGroupWithZero K L).toMonoidHom).range.index
 
@@ -181,16 +183,16 @@ theorem mapValueGroupWithZero_self (K : Type*) [Field K] [ValuativeRel K] :
 
 /-- The residue degree of the identity extension is `1`. -/
 @[simp]
-theorem residueDegree_self (K : Type*) [Field K] [ValuativeRel K] :
-    residueDegree K K = 1 := by
-  unfold residueDegree
+theorem inertiaDeg_self (K : Type*) [Field K] [ValuativeRel K] :
+    inertiaDeg K K = 1 := by
+  unfold inertiaDeg
   exact Module.finrank_self 𝓀[K]
 
 /-- The ramification index of the identity extension is `1`. -/
 @[simp]
-theorem ramificationIndex_self (K : Type*) [Field K] [ValuativeRel K] :
-    ramificationIndex K K = 1 := by
-  rw [ramificationIndex, mapValueGroupWithZero_self]
+theorem ramificationIdx_self (K : Type*) [Field K] [ValuativeRel K] :
+    ramificationIdx K K = 1 := by
+  rw [ramificationIdx, mapValueGroupWithZero_self]
   have hid : Units.map (MonoidWithZeroHom.id (ValueGroupWithZero K)).toMonoidHom =
       MonoidHom.id _ := by
     ext u
@@ -204,7 +206,7 @@ variable {F : Type*} [Field F] [ValuativeRel F] [Algebra K F] [Algebra F L]
 
 omit [ValuativeExtension K L] in
 /-- A tower of valuative extensions is a valuative extension. -/
-theorem tower [ValuativeExtension K F] [ValuativeExtension F L] : ValuativeExtension K L where
+theorem comp [ValuativeExtension K F] [ValuativeExtension F L] : ValuativeExtension K L where
   vle_iff_vle a b := by
     rw [IsScalarTower.algebraMap_apply K F L, IsScalarTower.algebraMap_apply K F L,
       vle_iff_vle (A := F) (B := L), vle_iff_vle (A := K) (B := F)]
@@ -227,18 +229,18 @@ instance instIsScalarTower_integer [ValuativeExtension K F] [ValuativeExtension 
   exact IsScalarTower.algebraMap_apply K F L (x : K)
 
 /-- Residue degree is multiplicative in towers (Kuhlmann, Lemma 6.16). -/
-theorem residueDegree_mul [ValuativeExtension K F] [ValuativeExtension F L] :
-    residueDegree K F * residueDegree F L = residueDegree K L := by
-  simpa [residueDegree] using
+theorem inertiaDeg_mul_inertiaDeg [ValuativeExtension K F] [ValuativeExtension F L] :
+    inertiaDeg K F * inertiaDeg F L = inertiaDeg K L := by
+  simpa [inertiaDeg] using
     Module.finrank_mul_finrank (F := 𝓀[K]) (K := 𝓀[F]) (A := 𝓀[L])
 
 /-- Ramification index is multiplicative in towers (Kuhlmann, Lemma 6.16).
 
-The factor `ramificationIndex K F` is the index in `(ValueGroupWithZero F)ˣ`.
+The factor `ramificationIdx K F` is the index in `(ValueGroupWithZero F)ˣ`.
 Injectivity of `mapValueGroupWithZero F L` transports it into `(ValueGroupWithZero L)ˣ`,
-where it multiplies `ramificationIndex F L`. -/
-theorem ramificationIndex_mul [ValuativeExtension K F] [ValuativeExtension F L] :
-    ramificationIndex K F * ramificationIndex F L = ramificationIndex K L := by
+where it multiplies `ramificationIdx F L`. -/
+theorem ramificationIdx_mul_ramificationIdx [ValuativeExtension K F] [ValuativeExtension F L] :
+    ramificationIdx K F * ramificationIdx F L = ramificationIdx K L := by
   have hcomp := mapValueGroupWithZero_comp (K := K) (F := F) (L := L)
   have hunits : Units.map (mapValueGroupWithZero K L).toMonoidHom =
       (Units.map (mapValueGroupWithZero F L).toMonoidHom).comp
@@ -247,17 +249,17 @@ theorem ramificationIndex_mul [ValuativeExtension K F] [ValuativeExtension F L] 
     simpa [MonoidWithZeroHom.comp_apply] using (congr($hcomp (u : _))).symm
   have hinj : Function.Injective (Units.map (mapValueGroupWithZero F L).toMonoidHom) :=
     Units.map_injective (mapValueGroupWithZero_strictMono (A := F) (B := L)).injective
-  rw [ramificationIndex, ramificationIndex, ramificationIndex, hunits, MonoidHom.range_comp,
+  rw [ramificationIdx, ramificationIdx, ramificationIdx, hunits, MonoidHom.range_comp,
     ← Subgroup.index_map_of_injective
       (Units.map (mapValueGroupWithZero K F).toMonoidHom).range hinj]
 
 /-! ### Immediate extensions -/
 
 /-- `e(L/K) = 1` if and only if `mapValueGroupWithZero K L` is surjective. -/
-theorem ramificationIndex_eq_one_iff :
-    ramificationIndex K L = 1 ↔ Function.Surjective (mapValueGroupWithZero K L) := by
+theorem ramificationIdx_eq_one_iff :
+    ramificationIdx K L = 1 ↔ Function.Surjective (mapValueGroupWithZero K L) := by
   classical
-  rw [ramificationIndex, Subgroup.index_eq_one, MonoidHom.range_eq_top]
+  rw [ramificationIdx, Subgroup.index_eq_one, MonoidHom.range_eq_top]
   constructor
   · intro h γ
     by_cases hγ : γ = 0
@@ -275,15 +277,15 @@ theorem ramificationIndex_eq_one_iff :
     simpa using hγ
 
 /-- `f(L/K) = 1` if and only if the residue-field algebra map is surjective. -/
-theorem residueDegree_eq_one_iff :
-    residueDegree K L = 1 ↔ Function.Surjective (algebraMap 𝓀[K] 𝓀[L]) := by
-  rw [residueDegree, Algebra.finrank_eq_one_iff_bijective_algebraMap]
+theorem inertiaDeg_eq_one_iff :
+    inertiaDeg K L = 1 ↔ Function.Surjective (algebraMap 𝓀[K] 𝓀[L]) := by
+  rw [inertiaDeg, Algebra.finrank_eq_one_iff_bijective_algebraMap]
   exact ⟨And.right, fun h ↦ ⟨RingHom.injective _, h⟩⟩
 
 /-- An extension is immediate if and only if `e(L/K) = f(L/K) = 1`. -/
-theorem isImmediate_iff_ramificationIndex_eq_one_and_residueDegree_eq_one :
-    IsImmediate K L ↔ ramificationIndex K L = 1 ∧ residueDegree K L = 1 := by
-  rw [IsImmediate, ramificationIndex_eq_one_iff, residueDegree_eq_one_iff]
+theorem isImmediate_iff_ramificationIdx_eq_one_and_inertiaDeg_eq_one :
+    IsImmediate K L ↔ ramificationIdx K L = 1 ∧ inertiaDeg K L = 1 := by
+  rw [IsImmediate, ramificationIdx_eq_one_iff, inertiaDeg_eq_one_iff]
 
 /-! ### Cosets of the value group -/
 
@@ -744,9 +746,9 @@ theorem finite_residueField_extension [FiniteDimensional K L] : Module.Finite �
   exact Nat.not_succ_le_self _ this
 
 /-- The residue degree of a finite extension is positive (Kuhlmann, Lemma 6.13). -/
-theorem residueDegree_pos [FiniteDimensional K L] : 0 < residueDegree K L := by
+theorem inertiaDeg_pos [FiniteDimensional K L] : 0 < inertiaDeg K L := by
   have : Module.Finite 𝓀[K] 𝓀[L] := finite_residueField_extension (K := K) (L := L)
-  simpa [residueDegree] using Module.finrank_pos (R := 𝓀[K]) (M := 𝓀[L])
+  simpa [inertiaDeg] using Module.finrank_pos (R := 𝓀[K]) (M := 𝓀[L])
 
 /-- For a finite extension, the value-group quotient is finite (Kuhlmann, Lemma 6.13). -/
 theorem finite_valueGroup_quotient [FiniteDimensional K L] :
@@ -786,14 +788,14 @@ theorem finite_valueGroup_quotient [FiniteDimensional K L] :
   exact Nat.not_succ_le_self _ this
 
 /-- The ramification index of a finite extension is nonzero (Kuhlmann, Lemma 6.13). -/
-theorem ramificationIndex_ne_zero [FiniteDimensional K L] : ramificationIndex K L ≠ 0 := by
+theorem ramificationIdx_ne_zero [FiniteDimensional K L] : ramificationIdx K L ≠ 0 := by
   have : Finite (valueGroupQuotient K L) := finite_valueGroup_quotient (K := K) (L := L)
-  rw [ramificationIndex, Subgroup.index_eq_card]
+  rw [ramificationIdx, Subgroup.index_eq_card]
   exact Finite.card_pos.ne'
 
 /-- The ramification index of a finite extension is at least `1`. -/
-theorem one_le_ramificationIndex [FiniteDimensional K L] : 1 ≤ ramificationIndex K L :=
-  Nat.one_le_iff_ne_zero.mpr (ramificationIndex_ne_zero (K := K) (L := L))
+theorem one_le_ramificationIdx [FiniteDimensional K L] : 1 ≤ ramificationIdx K L :=
+  Nat.one_le_iff_ne_zero.mpr (ramificationIdx_ne_zero (K := K) (L := L))
 
 /-! ### The fundamental inequality -/
 
@@ -803,16 +805,16 @@ theorem one_le_ramificationIndex [FiniteDimensional K L] : 1 ≤ ramificationInd
 Both factors are positive, so the product is not the `0` recorded for an infinite
 cardinal. -/
 theorem fundamental_inequality [FiniteDimensional K L] :
-    ramificationIndex K L * residueDegree K L ≤ Module.finrank K L := by
-  let e := ramificationIndex K L
-  let f := residueDegree K L
-  have he : e ≠ 0 := ramificationIndex_ne_zero (K := K) (L := L)
-  have hf : 0 < f := residueDegree_pos (K := K) (L := L)
+    ramificationIdx K L * inertiaDeg K L ≤ Module.finrank K L := by
+  let e := ramificationIdx K L
+  let f := inertiaDeg K L
+  have he : e ≠ 0 := ramificationIdx_ne_zero (K := K) (L := L)
+  have hf : 0 < f := inertiaDeg_pos (K := K) (L := L)
   have : Nonempty (Fin e) := Fin.pos_iff_nonempty.mp (Nat.pos_of_ne_zero he)
   have : Nonempty (Fin f) := Fin.pos_iff_nonempty.mp hf
   have : Module.Finite 𝓀[K] 𝓀[L] := finite_residueField_extension (K := K) (L := L)
   have hf_rank : Module.finrank 𝓀[K] 𝓀[L] = f := by
-    simp [f, residueDegree]
+    simp [f, inertiaDeg]
   let b := Module.finBasisOfFinrankEq 𝓀[K] 𝓀[L] hf_rank
   obtain ⟨u_sub, hu_sub⟩ := exists_residue_lift b
   let u : Fin f → L := fun j ↦ (u_sub j : L)
@@ -829,7 +831,7 @@ theorem fundamental_inequality [FiniteDimensional K L] :
   have : Fintype Q := Fintype.ofFinite Q
   have h_card : Fintype.card Q = e := by
     unfold e
-    rw [ramificationIndex, Subgroup.index_eq_card, ← Nat.card_eq_fintype_card]
+    rw [ramificationIdx, Subgroup.index_eq_card, ← Nat.card_eq_fintype_card]
   let eqv : Q ≃ Fin e := Fintype.equivFinOfCardEq h_card
   have hz_ex : ∀ i : Fin e, ∃ z : L, z ≠ 0 ∧
       valuation L z = ((eqv.symm i).out : ValueGroupWithZero L) := by
@@ -858,5 +860,28 @@ theorem fundamental_inequality [FiniteDimensional K L] :
   simpa [Fintype.card_prod, e, f] using hcard
 
 end Field
+
+/-! ### Deprecated aliases
+
+Names used before the rename to Mathlib's `ramificationIdx` / `inertiaDeg`
+conventions. -/
+
+@[deprecated (since := "2026-11-16")] alias residueDegree := inertiaDeg
+@[deprecated (since := "2026-11-16")] alias ramificationIndex := ramificationIdx
+@[deprecated (since := "2026-11-16")] alias residueDegree_self := inertiaDeg_self
+@[deprecated (since := "2026-11-16")] alias ramificationIndex_self := ramificationIdx_self
+@[deprecated (since := "2026-11-16")] alias tower := comp
+@[deprecated (since := "2026-11-16")] alias residueDegree_mul := inertiaDeg_mul_inertiaDeg
+@[deprecated (since := "2026-11-16")]
+alias ramificationIndex_mul := ramificationIdx_mul_ramificationIdx
+@[deprecated (since := "2026-11-16")]
+alias ramificationIndex_eq_one_iff := ramificationIdx_eq_one_iff
+@[deprecated (since := "2026-11-16")] alias residueDegree_eq_one_iff := inertiaDeg_eq_one_iff
+@[deprecated (since := "2026-11-16")]
+alias isImmediate_iff_ramificationIndex_eq_one_and_residueDegree_eq_one :=
+  isImmediate_iff_ramificationIdx_eq_one_and_inertiaDeg_eq_one
+@[deprecated (since := "2026-11-16")] alias residueDegree_pos := inertiaDeg_pos
+@[deprecated (since := "2026-11-16")] alias ramificationIndex_ne_zero := ramificationIdx_ne_zero
+@[deprecated (since := "2026-11-16")] alias one_le_ramificationIndex := one_le_ramificationIdx
 
 end ValuativeExtension

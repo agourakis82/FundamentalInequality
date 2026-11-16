@@ -25,7 +25,7 @@ constructed valuation is one. Uniqueness of a compatible valuative relation
 on the degree-`p` extension is deduced from completeness of `F_p((t))` and
 `spectralNorm_unique_field_norm_ext`, after lifting rank at most one along
 the finite extension of the hull. Compatibility along the tower uses
-`ValuativeExtension.tower`. No general henselian uniqueness theorem is used,
+`ValuativeExtension.comp`. No general henselian uniqueness theorem is used,
 and no `sorry` is introduced.
 -/
 
@@ -100,19 +100,19 @@ instance baseExtensionValuativeExtension : ValuativeExtension (Base p) (Extensio
 
 /-- A prime-degree valuative extension with surjective `p`-th powers and ramification
 index dividing the degree has index one. -/
-theorem ramificationIndex_eq_one_of_pow_surjective
+theorem ramificationIdx_eq_one_of_pow_surjective
     (p : ℕ) [Fact p.Prime]
     (K L : Type*) [Field K] [Field L] [ValuativeRel K] [ValuativeRel L]
     [Algebra K L] [ValuativeExtension K L] [FiniteDimensional K L]
     (hpow : Function.Surjective (fun x : L ↦ x ^ p))
     (hdegree : Module.finrank K L = p)
-    (hindex : ramificationIndex K L ∣ Module.finrank K L) :
-    ramificationIndex K L = 1 := by
-  have hindexp : ramificationIndex K L ∣ p := hdegree ▸ hindex
+    (hindex : ramificationIdx K L ∣ Module.finrank K L) :
+    ramificationIdx K L = 1 := by
+  have hindexp : ramificationIdx K L ∣ p := hdegree ▸ hindex
   rcases (Fact.out : p.Prime).eq_one_or_self_of_dvd _ hindexp with he1 | hep
   · exact he1
-  have he1 : ramificationIndex K L = 1 := by
-    apply ramificationIndex_eq_one_iff.mpr
+  have he1 : ramificationIdx K L = 1 := by
+    apply ramificationIdx_eq_one_iff.mpr
     intro γ
     obtain ⟨x, rfl⟩ := valuation_surjective (K := L) γ
     by_cases hx : x = 0
@@ -191,8 +191,8 @@ instance extensionCompatible : (spectralValuation p (Extension p)).Compatible :=
   Valuation.Compatible.ofValuation _
 
 /-- The spectral extension has ramification index one for every prime `p`. -/
-theorem concrete_ramificationIndex : ramificationIndex (Hull p) (Extension p) = 1 := by
-  apply ramificationIndex_eq_one_iff.mpr
+theorem concrete_ramificationIdx : ramificationIdx (Hull p) (Extension p) = 1 := by
+  apply ramificationIdx_eq_one_iff.mpr
   intro γ
   obtain ⟨x, rfl⟩ := valuation_surjective (K := Extension p) γ
   by_cases hx : x = 0
@@ -274,6 +274,10 @@ theorem hull_unique (other : ValuativeRel (Hull p))
   purelyInseparable_unique (Base p) (Hull p) p other (hullValuativeRel p) h
     (baseHullValuativeExtension p)
 
+@[deprecated (since := "2026-11-16")]
+alias ramificationIndex_eq_one_of_pow_surjective := ramificationIdx_eq_one_of_pow_surjective
+@[deprecated (since := "2026-11-16")] alias concrete_ramificationIndex := concrete_ramificationIdx
+
 end ArtinSchreierDefect.General
 
 /-! ### Backwards-compatible quadratic API -/
@@ -316,18 +320,18 @@ instance baseExtensionValuativeExtension : ValuativeExtension Base Extension :=
   General.baseExtensionValuativeExtension 2
 
 /-- The original quadratic ramification lemma. -/
-theorem ramificationIndex_eq_one_of_square_surjective
+theorem ramificationIdx_eq_one_of_square_surjective
     (K L : Type*) [Field K] [Field L] [ValuativeRel K] [ValuativeRel L]
     [Algebra K L] [ValuativeExtension K L] [FiniteDimensional K L]
     (hsquare : Function.Surjective (fun x : L ↦ x ^ 2))
-    (hdegree : Module.finrank K L = 2) : ramificationIndex K L = 1 := by
-  apply General.ramificationIndex_eq_one_of_pow_surjective 2 K L hsquare hdegree
-  have hepos := one_le_ramificationIndex (K := K) (L := L)
-  have hfpos := residueDegree_pos (K := K) (L := L)
+    (hdegree : Module.finrank K L = 2) : ramificationIdx K L = 1 := by
+  apply General.ramificationIdx_eq_one_of_pow_surjective 2 K L hsquare hdegree
+  have hepos := one_le_ramificationIdx (K := K) (L := L)
+  have hfpos := inertiaDeg_pos (K := K) (L := L)
   have hbound := fundamental_inequality (K := K) (L := L)
   rw [hdegree] at hbound
-  have hele : ramificationIndex K L ≤ 2 := by nlinarith
-  have he : ramificationIndex K L = 1 ∨ ramificationIndex K L = 2 := by omega
+  have hele : ramificationIdx K L ≤ 2 := by nlinarith
+  have he : ramificationIdx K L = 1 ∨ ramificationIdx K L = 2 := by omega
   rw [hdegree]
   rcases he with he | he <;> simp [he]
 
@@ -336,8 +340,8 @@ instance extensionCharP : CharP Extension 2 := General.extensionCharP 2
 instance extensionPerfect : PerfectField Extension := General.extensionPerfect 2
 
 /-- The original ramification-index computation at `p = 2`. -/
-theorem concrete_ramificationIndex : ramificationIndex Hull Extension = 1 :=
-  General.concrete_ramificationIndex 2
+theorem concrete_ramificationIdx : ramificationIdx Hull Extension = 1 :=
+  General.concrete_ramificationIdx 2
 
 /-- Raising both sides to a positive power preserves and reflects the valuative relation. -/
 theorem pow_vle_pow_iff (L : Type*) [Field L] [ValuativeRel L]
@@ -364,6 +368,10 @@ theorem hull_unique (other : ValuativeRel Hull)
 
 instance instScalarTowerBaseHullExtension : IsScalarTower Base Hull Extension :=
   General.instScalarTowerBaseHullExtension 2
+
+@[deprecated (since := "2026-11-16")]
+alias ramificationIndex_eq_one_of_square_surjective := ramificationIdx_eq_one_of_square_surjective
+@[deprecated (since := "2026-11-16")] alias concrete_ramificationIndex := concrete_ramificationIdx
 
 end ArtinSchreierDefect.Quadratic
 
@@ -421,7 +429,7 @@ theorem unique_extension (other : ValuativeRel (Extension p))
   let := other
   let := h
   have hBase : ValuativeExtension (Base p) (Extension p) :=
-    ValuativeExtension.tower (K := Base p) (F := Hull p) (L := Extension p)
+    ValuativeExtension.comp (K := Base p) (F := Hull p) (L := Extension p)
   have : IsRankLeOne (Extension p) := isRankLeOne_of_finite (Hull p) (Extension p)
   have : IsNontrivial (Extension p) :=
     isNontrivial_of_valuativeExtension (Base p) (Extension p)
