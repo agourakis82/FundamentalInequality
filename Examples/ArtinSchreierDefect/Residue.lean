@@ -5,7 +5,7 @@ Authors: Demetrios Chiuratto Agourakis
 -/
 module
 
-public import Examples.ArtinSchreierDefect.Valuation
+public import Examples.ArtinSchreierDefect.ResidueGeneral
 public import Mathlib.Algebra.CharP.Lemmas
 public import Mathlib.Algebra.CharP.Subring
 public import Mathlib.Algebra.CharP.Quotient
@@ -13,14 +13,13 @@ public import Mathlib.Algebra.CharP.Two
 public import Mathlib.FieldTheory.Perfect
 
 /-!
-# Residue degree one and the unconditional Ostrowski sum
+# Backwards-compatible quadratic residue API
 
-A square root of `t⁻¹` in the perfect hull produces a unit generator of
-residue `1`, and every integral element of the quadratic extension is
-congruent, after a 2-power, to an integer of the first purely inseparable
-layer of the hull. The residue degree of the constructed valuation is
-therefore one, and the Ostrowski sum holds unconditionally:
-`Σ eᵢfᵢ = ef = 1 < 2 = [L:K]`.
+The general residue-degree and strict-sum results are in
+`Examples.ArtinSchreierDefect.ResidueGeneral`.  This file retains the original
+quadratic helper lemmas and public declarations at `p = 2`; its final residue
+degree, strict-sum, and defect-quotient theorems are specialisations of the
+all-primes development.
 -/
 
 @[expose] public section
@@ -388,8 +387,8 @@ theorem exists_root_coords (x : Extension) :
     rw [hrq]
     have hdiff : (g - standardPolynomial 2 * (g /ₘ standardPolynomial 2)) - g =
         - (standardPolynomial 2 * (g /ₘ standardPolynomial 2)) := by ring
-    rw [hdiff, dvd_neg]
-    exact dvd_mul_right _ _
+    rw [hdiff]
+    exact dvd_neg.mpr (dvd_mul_right _ _)
   have hdegf : (standardPolynomial 2).degree = 2 := by
     have hnat' : (standardPolynomial 2).natDegree = 2 :=
       ArtinSchreier.natDegree_polynomial 2 _
@@ -668,60 +667,8 @@ instance hullResiduePerfect : PerfectField 𝓀[Hull] := by
   exact PerfectRing.toPerfectField 𝓀[Hull] 2
 
 /-- The residue degree of the constructed valuation is one. -/
-theorem concrete_residueDegree : residueDegree Hull Extension = 1 := by
-  refine residueDegree_eq_one_iff.mpr ?_
-  intro z
-  obtain ⟨u, hu⟩ := Ideal.Quotient.mk_surjective (I := 𝓂[Extension]) z
-  set x : Extension := (u : Extension)
-  have hint : x ≤ᵥ 1 :=
-    (Valuation.vle_one_iff (v := valuation Extension)).mpr
-      ((Valuation.mem_integer_iff (valuation Extension) x).mp u.property)
-  obtain ⟨n, A, B, hA, hB, hpow⟩ := exists_levelOne_pow_coords x
-  have hpow_int : x ^ (2 ^ n) ≤ᵥ 1 := by
-    have : x ^ (2 ^ n) ≤ᵥ (1 : Extension) ^ (2 ^ n) := pow_vle_pow hint (2 ^ n)
-    simpa using this
-  obtain ⟨y, hyint, hydiff⟩ := integral_levelOne_cong hA hB hpow hpow_int
-  let yO : 𝒪[Hull] :=
-    ⟨y, (Valuation.mem_integer_iff (valuation Hull) y).mpr
-      ((Valuation.vle_one_iff (v := valuation Hull)).mp hyint)⟩
-  let wO : 𝒪[Extension] := u ^ (2 ^ n)
-  have hcongr : IsLocalRing.residue 𝒪[Extension] wO =
-      algebraMap 𝓀[Hull] 𝓀[Extension] (IsLocalRing.residue 𝒪[Hull] yO) := by
-    rw [IsLocalRing.ResidueField.algebraMap_residue]
-    rw [← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff]
-    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff,
-      Valuation.Integer.not_isUnit_iff_valuation_lt_one]
-    have hcoe : ((wO - algebraMap 𝒪[Hull] 𝒪[Extension] yO : 𝒪[Extension]) : Extension) =
-        x ^ (2 ^ n) - algebraMap Hull Extension y := by
-      simp [wO, x, yO]
-    have : valuation Extension
-        ((wO - algebraMap 𝒪[Hull] 𝒪[Extension] yO : 𝒪[Extension]) : Extension) < 1 := by
-      have := (Valuation.vlt_iff_lt (v := valuation Extension)).mp hydiff
-      simpa [hcoe] using this
-    exact this
-  have hroot : (IsLocalRing.residue 𝒪[Extension] u) ^ (2 ^ n) =
-      algebraMap 𝓀[Hull] 𝓀[Extension] (IsLocalRing.residue 𝒪[Hull] yO) := by
-    simpa [wO] using hcongr
-  obtain ⟨t, ht⟩ := exists_pow_root_of_perfect (F := 𝓀[Hull]) n
-    (IsLocalRing.residue 𝒪[Hull] yO)
-  refine ⟨t, ?_⟩
-  have hsub :
-      ((IsLocalRing.residue 𝒪[Extension] u) -
-        algebraMap 𝓀[Hull] 𝓀[Extension] t) ^ (2 ^ n) = 0 := by
-    have : CharP 𝓀[Extension] 2 := inferInstance
-    have hxy :
-        (IsLocalRing.residue 𝒪[Extension] u) -
-            algebraMap 𝓀[Hull] 𝓀[Extension] t =
-          (IsLocalRing.residue 𝒪[Extension] u) +
-            algebraMap 𝓀[Hull] 𝓀[Extension] t :=
-      CharTwo.sub_eq_add _ _
-    rw [hxy, add_pow_expChar_pow (p := 2), hroot, ← map_pow, ht, CharTwo.add_self_eq_zero]
-  have hsubz :
-      (algebraMap 𝓀[Hull] 𝓀[Extension] t - z) ^ (2 ^ n) = 0 := by
-    have hzres : z = IsLocalRing.residue 𝒪[Extension] u := hu.symm
-    rw [hzres, CharTwo.sub_eq_add, add_comm, ← CharTwo.sub_eq_add]
-    exact hsub
-  exact eq_of_sub_eq_zero ((pow_eq_zero_iff (pow_ne_zero n two_ne_zero)).mp hsubz)
+theorem concrete_residueDegree : residueDegree Hull Extension = 1 :=
+  General.concrete_residueDegree 2
 
 /-- The Ostrowski sum for the unique compatible valuation on the quadratic
 Artin–Schreier extension.
@@ -735,10 +682,7 @@ theorem quadratic_sum_strict :
     ramificationIndex Hull Extension * residueDegree Hull Extension = 1 ∧
     (∑ w : Extensions Hull Extension, extensionWeight w) < 2 ∧
     2 = Module.finrank Hull Extension := by
-  let := extensionFintype_of_unique Hull Extension extension_eq_spectral
-  exact sum_strict_of_unique_immediate Hull Extension extension_eq_spectral 2 (by decide)
-    concrete_ramificationIndex concrete_residueDegree
-    ArtinSchreierDefect.quadratic_degree
+  simpa using General.sum_strict 2
 
 
 end ArtinSchreierDefect.Quadratic
@@ -755,12 +699,23 @@ theorem defect_of_immediate (n e f q : ℕ) (hn : n = q) (he : e = 1) (hf : f = 
     finrankQuotient n e f = q ∧ n = finrankQuotient n e f * e * f := by
   simp [finrankQuotient, hn, he, hf]
 
+namespace General
+
+/-- The numerical defect quotient is the prime extension degree. -/
+theorem defect_quotient (p : ℕ) [Fact p.Prime] :
+    finrankQuotient (Module.finrank (Hull p) (Extension p))
+      (ramificationIndex (Hull p) (Extension p))
+      (residueDegree (Hull p) (Extension p)) = p := by
+  simp [finrankQuotient, ArtinSchreierDefect.extension_degree,
+    concrete_ramificationIndex, concrete_residueDegree]
+
+end General
+
 /-- Arithmetic consequence of the proved identities `e = 1`, `f = 1`, and `[L:K] = 2`. -/
 theorem quadratic_defect_quotient :
     finrankQuotient (Module.finrank Quadratic.Hull Quadratic.Extension)
       (ramificationIndex Quadratic.Hull Quadratic.Extension)
       (residueDegree Quadratic.Hull Quadratic.Extension) = 2 := by
-  simp [finrankQuotient, quadratic_degree, Quadratic.concrete_ramificationIndex,
-    Quadratic.concrete_residueDegree]
+  simpa using General.defect_quotient 2
 
 end ArtinSchreierDefect

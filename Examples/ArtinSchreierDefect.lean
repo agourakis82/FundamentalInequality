@@ -13,17 +13,19 @@ public import Examples.ArtinSchreierDefect.Residue
 This is the root module for the example. The development is split as follows:
 
 * `Examples.ArtinSchreierDefect.Basic`: Laurent base, perfect hull, and the
-  quadratic Artin–Schreier extension at `p = 2`.
+  irreducible degree-`p` Artin–Schreier extension for every prime `p`.
 * `Examples.Bridge.Completeness`: rank lifting, uniqueness from
   completeness of the base, and the abstract Ostrowski-sum comparison.
 * `Examples.ArtinSchreierDefect.Valuation`: spectral valuations, ramification
   index one, and uniqueness of a compatible valuative relation, using
   `ValuativeExtension.tower` for compatibility along the tower.
-* `Examples.ArtinSchreierDefect.Residue`: residue degree one and the
-  unconditional Ostrowski sum `Σ eᵢfᵢ = ef = 1 < 2 = [L:K]`.
+* `Examples.ArtinSchreierDefect.ResidueGeneral`: residue degree one and the
+  unconditional Ostrowski sum `Σ eᵢfᵢ = ef = 1 < p = [L:K]`.
+* `Examples.ArtinSchreierDefect.Residue`: the backwards-compatible quadratic
+  API at `p = 2` and the numerical defect quotient.
 
-The polynomial results in `Basic` hold for every prime `p`. Irreducibility
-and the valued construction are currently specialised to `p = 2`.
+The construction is uniform in `p`; the original quadratic declarations are
+one-line specialisations where their statements coincide with the general API.
 -/
 
 @[expose] public section

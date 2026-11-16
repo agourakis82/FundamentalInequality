@@ -36,6 +36,7 @@ It must not appear among the `Examples` library roots in `lakefile.toml`.
 #print axioms ArtinSchreier.splits_of_root
 #print axioms ArtinSchreier.isRoot_iff
 #print axioms ArtinSchreier.factorisation
+#print axioms ArtinSchreier.irreducible_of_not_isRoot
 #print axioms ArtinSchreierBridge.localResidueDegree
 #print axioms ArtinSchreierBridge.local_map_eq_algebraMap
 #print axioms ArtinSchreierBridge.isLocalHom_of_compatible
@@ -62,6 +63,18 @@ It must not appear among the `Examples` library roots in `lakefile.toml`.
 #print axioms ArtinSchreierDefect.exp_one_not_pth_power
 #print axioms ArtinSchreierDefect.base_no_root
 #print axioms ArtinSchreierDefect.hull_no_root
+#print axioms ArtinSchreierDefect.standardPolynomial_irreducible
+#print axioms ArtinSchreierDefect.extension_degree
+#print axioms ArtinSchreierDefect.root_equation
+#print axioms ArtinSchreierDefect.General.ramificationIndex_eq_one_of_pow_surjective
+#print axioms ArtinSchreierDefect.General.concrete_ramificationIndex
+#print axioms ArtinSchreierDefect.General.unique_extension
+#print axioms ArtinSchreierDefect.General.extension_eq_spectral
+#print axioms ArtinSchreierDefect.General.exists_levelOne_pow_polynomial
+#print axioms ArtinSchreierDefect.General.integral_levelOne_polynomial_cong
+#print axioms ArtinSchreierDefect.General.concrete_residueDegree
+#print axioms ArtinSchreierDefect.General.sum_strict
+#print axioms ArtinSchreierDefect.General.defect_quotient
 #print axioms ArtinSchreierDefect.quadratic_irreducible
 #print axioms ArtinSchreierDefect.QuadraticExtension
 #print axioms ArtinSchreierDefect.quadratic_degree
