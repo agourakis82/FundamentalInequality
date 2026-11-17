@@ -90,6 +90,11 @@ irreducibility, uniqueness of the extended valuation, `e = f = 1`, and
 quotient is `p`.  The original `p = 2` declarations remain available as a
 backwards-compatible quadratic API.
 
+`Examples/PadicSqrtP/` is the Stage 2 contrast example.  For every prime `p`,
+it constructs the unique compatible spectral valuative relation on
+`ℚ_[p](√p)`, proves `[ℚ_[p](√p) : ℚ_[p]] = 2`, `e = 2`, and `f = 1`, and
+deduces `e f = [L : K]` directly from the fundamental inequality.
+
 ## Building
 
 ```bash
