@@ -2,8 +2,9 @@
 
 This file plans how the repository grows from the fundamental inequality into
 a larger body of valuation theory intended for Mathlib. It is a plan, not a
-record of finished work: Stages 1 and 2 are done. The long-term target is the
-theory of the defect and of tame extensions, following Kuhlmann's book.
+record of finished work: Stages 1 and 2, and the equality part of Stage 3, are
+done. The long-term target is the theory of the defect and of tame extensions,
+following Kuhlmann's book.
 
 Two rules hold for every stage.
 
@@ -38,7 +39,7 @@ Difficulty: **S** (a few hundred lines), **M** (one substantial file),
 | --- | --- | --- | --- |
 | 1 | `e`, `f`, towers, fundamental inequality; Artin–Schreier defect example for every prime | done | — |
 | 2 | Contrast example `ℚ_p(√p)`: `e = 2`, `f = 1`, `e f = [L:K]` | done | M |
-| 3 | Defectless equality `e f = [L:K]` over complete discretely valued fields | next | L |
+| 3 | Defectless equality `e f = [L:K]` over complete discretely valued fields | done (equality) | L |
 | 4 | Henselian valued fields: uniqueness of extension, henselization (Kuhlmann §7.8, Ch. 9) | planned | XL |
 | 5 | Ostrowski's sum `∑ eᵢ fᵢ ≤ [L:K]` over all extensions (Kuhlmann §7.9) | planned | L |
 | 6 | Defect: definition, defectless extensions and fields, Lemma of Ostrowski (Kuhlmann Ch. 11) | planned | L–XL |
@@ -97,26 +98,26 @@ Difficulty: **S** (a few hundred lines), **M** (one substantial file),
 - **Role.** First instance of Stage 3, and a test case that the Stage 3
   statement must reproduce.
 
-## Stage 3: the defectless equality over complete discretely valued fields (next)
+## Stage 3: the defectless equality over complete discretely valued fields (done: equality)
 
-- **Statement.** If `K` is complete for a discrete (rank-one, `IsDiscrete`)
-  valuation and `L/K` is finite, then
+- **Statement.** If `K` is complete for a discrete rank-at-most-one valuation
+  and `L/K` is finite, then
   `ramificationIdx K L * inertiaDeg K L = Module.finrank K L`.
   No separability, local compactness, or finite residue field is assumed.
-- **Proof plan.** The completeness argument of Serre, *Local Fields*,
-  Ch. II §2: with `π` a
-  uniformizer of `L` and `u₁, …, u_f` lifting a residue basis, the products
-  `uⱼ πⁱ` (`0 ≤ i < e`) are linearly independent (Stage 1, Lemma 6.12) and span
-  `𝒪[L]` over `𝒪[K]` by successive approximation, which uses completeness of
-  `K`. Steps:
-  1. The extension of the valuation to `L` is unique, and `L` is complete
-     (Stage 1 bridge; spectral norm).
-  2. `IsDiscrete K` and finite index give `IsDiscrete L`.
-  3. Spanning by successive approximation, giving the equality.
-  4. Bridge lemma: when `𝒪[K]` and `𝒪[L]` are DVRs, `ramificationIdx K L` and
-     `inertiaDeg K L` agree with `Ideal.ramificationIdx` and
-     `Ideal.inertiaDeg` of the maximal ideals. This connects the valuative and
-     ideal-theoretic APIs.
+- **Implemented.** `FundamentalInequality/DiscreteComplete.lean` proves the
+  equality by direct successive approximation. It reuses the Stage 1 family
+  of value-group representatives times residue-basis lifts. A strict decrease
+  becomes uniform after taking the `e`-th power and multiplying by the image
+  of the base uniformizer; rank at most one makes these bounds tend to zero,
+  and completeness sums the coefficient sequences in `K`. The family spans
+  `L` and Stage 1 supplies its linear independence. No topology on `L`,
+  separability, local compactness, finite residue field, or uniqueness
+  hypothesis is used.
+- **Example.** `Examples/PadicSqrtP/Stage3.lean` recovers the Stage 2 equality
+  for every prime `p` and again derives `f = 1` from `e = [L:K] = 2`.
+- **Not done.** The comparison with `Ideal.ramificationIdx` and
+  `Ideal.inertiaDeg` (the former step 4) remains planned. This stage adds no
+  Ostrowski sum, henselian or henselization result, or new uniqueness theorem.
 - **Mathlib found.**
   - `Mathlib/Analysis/Normed/Unbundled/SpectralNorm.lean`:
     `spectralNorm_unique_field_norm_ext`, `spectralNorm_extends`, and the
@@ -340,8 +341,8 @@ Order, each step a separate Mathlib PR that depends only on earlier ones:
 4. **Uniqueness over complete rank-one fields.** `unique_valuativeRel_of_complete`,
    near `Mathlib/Analysis/Normed/Unbundled/SpectralNorm.lean` or
    `Mathlib/Topology/Algebra/Valued/ValuativeRel.lean`.
-5. **Stage 3 and its bridge lemma** to `Ideal.ramificationIdx` /
-   `Ideal.inertiaDeg`.
+5. **Stage 3 equality, then its remaining bridge lemma** to
+   `Ideal.ramificationIdx` / `Ideal.inertiaDeg`.
 6. **Stages 4–8 in order.**
 
 Worked examples (Artin–Schreier, `ℚ_p(√p)`) stay in this repository or go to
